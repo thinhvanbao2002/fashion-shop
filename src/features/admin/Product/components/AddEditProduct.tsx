@@ -218,11 +218,11 @@ const AddEditProduct = () => {
             <Input />
           </Form.Item>
         </Col>
-        <Col span={8}>
+        {/* <Col span={8}>
           <Form.Item name='quantity' label='Số lượng'>
             <Input />
           </Form.Item>
-        </Col>
+        </Col> */}
       </Row>
       <Row>
         <Col span={8}>

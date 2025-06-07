@@ -59,7 +59,7 @@ export const getDataSource = (data: any, page: number) => {
 }
 
 export const vldOrderStatus = (value: string) => {
-  return `${ORDER_STATUS[value].text}`
+  return `${ORDER_STATUS[value]?.text}` || 'NaN'
 }
 
 export function formatPrice(num: string | any, type?: 'VND' | '$') {

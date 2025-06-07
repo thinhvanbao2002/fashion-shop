@@ -2,7 +2,7 @@ import { Button, Form, Input, Spin } from 'antd'
 import { useState } from 'react'
 import { authService } from './service/Apis'
 import LocalStorage from 'apis/localStorage'
-import { openNotification } from 'common/utils'
+import { openNotification, openNotificationError } from 'common/utils'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { setLogin } from 'redux/slice/login.slice'
@@ -29,6 +29,11 @@ function LoginPage() {
           dispatch(setLogin(res?.data))
           navigate('/')
         }
+      })
+      .catch((error: any) => {
+        console.log('🚀 ~ handleSubmit ~ error:', error)
+        openNotificationError(error)
+        setIsLoading(false)
       })
   }
 

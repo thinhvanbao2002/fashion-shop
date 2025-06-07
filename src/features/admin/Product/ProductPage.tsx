@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react'
 import FilterProduct from './components/FilterProduct'
 import { isNil, values } from 'lodash'
 import { TooltipCustom } from 'common/components/tooltip/ToolTipComponent'
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons'
+import { DeleteOutlined, EditOutlined, ImportOutlined } from '@ant-design/icons'
 import { ShowConfirm } from 'common/components/Alert'
 import { Button, Row, Spin, Tag } from 'antd'
 import { Styled } from 'styles/stylesComponent'
@@ -13,6 +13,8 @@ import { getDataSource, openNotification } from 'common/utils'
 import { productServices } from './ProductApis'
 import { useNavigate } from 'react-router-dom'
 import { ADMIN_PATH } from 'common/constants/paths'
+import { ImportStockModal } from './components/ImportProduct'
+import ModalComponent from 'common/components/modal/Modal'
 
 function ProductPage() {
   const [payload, setPayload] = useState<any>({
@@ -29,6 +31,7 @@ function ProductPage() {
   const [modalVisible, setModalVisible] = useState<boolean>(false)
   const [products, setProducts] = useState<Array<IProduct>>([])
   const [count, setCount] = useState<number>(12)
+  const [selectedProduct, setSelectedProduct] = useState<IProduct | null>(null)
   const navigate = useNavigate()
 
   const columnsListCategory: IColumnAntD[] = [
@@ -69,16 +72,16 @@ function ProductPage() {
     //   key: 'productType',
     //   dataIndex: 'productType'
     // },
-    {
-      title: 'Số lượng còn',
-      key: 'quantity',
-      dataIndex: 'quantity'
-    },
-    {
-      title: 'Số lượng đã bán',
-      key: 'sold',
-      dataIndex: 'sold'
-    },
+    // {
+    //   title: 'Số lượng còn',
+    //   key: 'quantity',
+    //   dataIndex: 'quantity'
+    // },
+    // {
+    //   title: 'Số lượng đã bán',
+    //   key: 'sold',
+    //   dataIndex: 'sold'
+    // },
     {
       title: 'Ngày tạo',
       key: 'createdAt',
@@ -92,6 +95,17 @@ function ProductPage() {
       render: (value: number, record: any) => {
         return (
           <div style={{ display: 'flex' }}>
+            <TooltipCustom
+              title={'Nhập kho'}
+              children={
+                <Button
+                  type={'text'}
+                  className={'btn-success-text'}
+                  icon={<ImportOutlined />}
+                  onClick={() => handleImortWarehouse(record)}
+                />
+              }
+            />
             <TooltipCustom
               title={'Cập nhật'}
               children={
@@ -202,6 +216,17 @@ function ProductPage() {
     [payload]
   )
 
+  const handleImortWarehouse = (record: any) => {
+    setSelectedProduct(record)
+    setModalVisible(true)
+    setTitle('Nhập kho')
+  }
+
+  const handleClose = useCallback(() => {
+    setModalVisible(false)
+    setSelectedProduct(null)
+  }, [])
+
   const handleNavigateEditProduct = (record: any) => {
     navigate('/ad-ce-product/', { state: { record: { ...record } } })
   }
@@ -209,6 +234,11 @@ function ProductPage() {
   const handleNavigateAddProduct = () => {
     navigate(ADMIN_PATH.CREATE_UPDATE_PRODUCT, { state: {} })
   }
+
+  const handleSuccess = () => {
+    handleGetProducts()
+  }
+
   return (
     <>
       <FilterProduct onChangeValue={handleFilterProduct} />
@@ -239,6 +269,15 @@ function ProductPage() {
           }}
         />
       </Spin>
+      <ModalComponent
+        loading={isLoading}
+        title={title}
+        width={500}
+        modalVisible={modalVisible}
+        children={
+          <ImportStockModal productId={selectedProduct?.id || ''} onSuccess={handleSuccess} onClose={handleClose} />
+        }
+      />
     </>
   )
 }

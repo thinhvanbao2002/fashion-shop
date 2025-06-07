@@ -42,7 +42,8 @@ const itemsMenu: MenuItem[] = [
   getItem('Bán hàng', 'sub1', <UserOutlined />, [
     getItem(<Link to={ADMIN_PATH.CATEGORY}>Danh mục</Link>, '4'),
     getItem(<Link to={ADMIN_PATH.PRODUCT}>Sản phẩm</Link>, '5'),
-    getItem(<Link to={ADMIN_PATH.ORDER}>Đơn hàng</Link>, '6')
+    getItem(<Link to={ADMIN_PATH.ORDER}>Đơn hàng</Link>, '6'),
+    getItem(<Link to={ADMIN_PATH.WAREHOUSE}>Kho hàng</Link>, '8')
   ]),
   getItem('Cấu hình', 'sub2', <SettingOutlined />, [
     getItem(<Link to={ADMIN_PATH.BLOG}>Bài viết</Link>, '7', <BookOutlined />)
@@ -125,6 +126,10 @@ const AdminLayout: React.FC = ({ children }: any) => {
           break
         case ADMIN_PATH.OVERVIEW:
           setTitleHeader('Thống kê báo cáo')
+          setKeySider('1')
+          break
+        case ADMIN_PATH.WAREHOUSE:
+          setTitleHeader('Quản lý kho hàng')
           setKeySider('1')
           break
 

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Select } from 'antd'
+import { InputNumber, Select } from 'antd'
 import CustomButton from 'common/components/button/Button'
 import { formatPrice, openNotification, openNotificationError } from 'common/utils'
 import { useCallback, useEffect, useState } from 'react'
@@ -28,7 +28,7 @@ function CartPage() {
 
   const handleDeleteCart = useCallback(async (cartId: number) => {
     try {
-      const res = await cartServices.delete(cartId)
+      const res = await cartServices.update(cartId, { product_number: 0 })
       if (res) {
         openNotification('success', 'Thành công', 'Xóa sản phẩm trong giỏ hàng thành công!')
         handleGetAllCart()
@@ -42,9 +42,8 @@ function CartPage() {
     try {
       if (carts && carts.length) {
         const totalAmount = carts.reduce((acc: number, item: any) => {
-          return item.total_price + acc
+          return item.product?.price * item.product_number + acc
         }, 0)
-
         setTotalPrice(totalAmount)
       } else {
         setTotalPrice(0)
@@ -53,6 +52,29 @@ function CartPage() {
       console.log('🚀 ~ handleCalculateTheTotalAmount ~ error:', error)
     }
   }, [carts])
+
+  const handleUpdateQuantity = useCallback(
+    async (cartId: number, quantity: number) => {
+      try {
+        await cartServices.update(cartId, { product_number: quantity })
+        const updatedCarts = carts.map((item: any) => {
+          if (item.id === cartId) {
+            return {
+              ...item,
+              product_number: quantity,
+              total_price: item.product?.price * quantity
+            }
+          }
+          return item
+        })
+        setCarts(updatedCarts)
+        handleCalculateTheTotalAmount()
+      } catch (error) {
+        openNotificationError(error)
+      }
+    },
+    [carts]
+  )
 
   useEffect(() => {
     handleGetAllCart()
@@ -117,23 +139,16 @@ function CartPage() {
                           <div>
                             <div className='text-custom-sm'>Số lượng</div>
                             <div>
-                              <Select
+                              <InputNumber
+                                min={1}
+                                max={99}
                                 style={{ width: 100 }}
                                 value={c.product_number}
-                                onChange={async (value: string) => {
-                                  await cartServices.update(c.id, { product_number: value })
-                                  handleGetAllCart()
+                                onChange={(value: number | null) => {
+                                  if (value !== null) {
+                                    handleUpdateQuantity(c.id, value)
+                                  }
                                 }}
-                                options={[
-                                  { value: 1, label: '1' },
-                                  { value: 2, label: '2' },
-                                  { value: 3, label: '3' },
-                                  { value: 4, label: '4' },
-                                  { value: 5, label: '5' },
-                                  { value: 6, label: '6' },
-                                  { value: 7, label: '7' },
-                                  { value: 8, label: '8' }
-                                ]}
                               />
                             </div>
                           </div>
