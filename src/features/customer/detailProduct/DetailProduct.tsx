@@ -1,4 +1,4 @@
-import { Image, Select } from 'antd'
+import { Image, Select, InputNumber } from 'antd'
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { productServices } from '../product/productApis'
@@ -167,20 +167,11 @@ function DetailProductPage() {
             <div>
               <div className='flex flex-col'>
                 <span>SỐ LƯỢNG</span>
-                <Select
-                  defaultValue='1'
+                <InputNumber
+                  min={1}
+                  defaultValue={1}
                   style={{ width: 180 }}
                   onChange={(value) => handleSetCartPayload('product_number', value)}
-                  options={[
-                    { value: '1', label: '1' },
-                    { value: '2', label: '2' },
-                    { value: '3', label: '3' },
-                    { value: '4', label: '4' },
-                    { value: '5', label: '5' },
-                    { value: '6', label: '6' },
-                    { value: '7', label: '7' },
-                    { value: '8', label: '8' }
-                  ]}
                 />
               </div>
             </div>
@@ -209,7 +200,7 @@ function DetailProductPage() {
         <RelatedProducts productList={relatedProducts} handleClick={handleRelatedProductClick} />
       </div>
       <div className='mt-20'>
-        <Comment id={id} reviews={product.product_reviews} getProduct={getProductById} />
+        {id && <Comment id={Number(id)} reviews={product.product_reviews} getProduct={getProductById} />}
       </div>
     </>
   )

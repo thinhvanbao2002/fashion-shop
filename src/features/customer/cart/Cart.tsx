@@ -28,7 +28,7 @@ function CartPage() {
 
   const handleDeleteCart = useCallback(async (cartId: number) => {
     try {
-      const res = await cartServices.update(cartId, { product_number: 0 })
+      const res = await cartServices.delete(cartId)
       if (res) {
         openNotification('success', 'Thành công', 'Xóa sản phẩm trong giỏ hàng thành công!')
         handleGetAllCart()
