@@ -23,6 +23,10 @@ export const orderServices = {
     const url = `/a/order/trigerWorkFlow/${id}`
     return AxiosClient.post(url)
   },
+  cancelOrder: (id: any) => {
+    const url = `/a/order/cancel/${id}`
+    return AxiosClient.post(url)
+  },
   put: (value: any) => {
     const url = `/a/order/${value?.id}`
     return AxiosClient.put(url, {
