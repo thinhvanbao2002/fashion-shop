@@ -1,26 +1,31 @@
-import React, { useCallback, useEffect, useState } from 'react'
-import { Avatar, Button, Dropdown, Form, Input, Layout } from 'antd'
-import TextArea from 'antd/es/input/TextArea'
-import { Link, useNavigate } from 'react-router-dom'
-import { UserOutlined } from '@ant-design/icons'
+import {
+  FacebookOutlined,
+  HeartOutlined,
+  InstagramOutlined,
+  SearchOutlined,
+  ShoppingCartOutlined,
+  TwitterOutlined,
+  UserOutlined
+} from '@ant-design/icons'
+import { Avatar, Badge, Button, Dropdown, Input, Layout } from 'antd'
 import { MenuProps } from 'antd/lib'
-import { useDispatch, useSelector } from 'react-redux'
-import { setLogin } from 'redux/slice/login.slice'
-import { openNotification } from 'common/utils'
-import _ from 'lodash'
 import { USER_PATH } from 'common/constants/paths'
+import { openNotification } from 'common/utils'
 import AccountUser from 'features/customer/account/components/Account'
+import _ from 'lodash'
+import React, { useCallback, useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { Link, useNavigate } from 'react-router-dom'
+import { setLogin } from 'redux/slice/login.slice'
 
 const { Header, Footer, Content } = Layout
-
-const headerStyle: React.CSSProperties = {
-  color: '#fff'
-}
 
 const layoutStyle = {
   overflow: 'hidden',
   width: '100vw',
-  maxWidth: '100%'
+  maxWidth: '100%',
+  display: 'flex',
+  flexDirection: 'column'
 }
 
 const UserLayout: React.FC = ({ children }: any) => {
@@ -29,6 +34,7 @@ const UserLayout: React.FC = ({ children }: any) => {
   const [userData, setUserData] = useState<any>({})
   const data = useSelector((state: any) => state.login)
   const [modalAccountIsvisible, setModalAccountIsVisible] = useState<boolean>(false)
+  const [cartCount] = useState<number>(0)
 
   const handleNavigate = (path: string) => {
     navigate(path)
@@ -45,6 +51,10 @@ const UserLayout: React.FC = ({ children }: any) => {
 
   const handleCloseModal = () => {
     setModalAccountIsVisible(false)
+  }
+
+  const handleWishlistClick = () => {
+    navigate('/wishlist')
   }
 
   useEffect(() => {
@@ -87,101 +97,244 @@ const UserLayout: React.FC = ({ children }: any) => {
 
   return (
     <Layout style={layoutStyle}>
-      <Header style={headerStyle} className='flex items-center justify-between h-28 bg-baseBackground'>
-        <div>
-          <img className='w-28' src='/LOGO-WEBSHOP.jpg' alt='' />
-        </div>
-        <div className='flex items-center'>
-          <div className='text-primary flex items-center justify-center uppercase font-semibold'>
+      {/* TOP BANNER */}
+      <div className='w-full bg-[#FFA500] text-white text-center py-2 text-xs'>
+        <p>Miễn phí vận chuyển cho đơn hàng từ 200.000 VNĐ | 🎁 Khuyến mãi hàng ngày</p>
+      </div>
+
+      <Header className='!bg-white !px-8 shadow-sm' style={{ backgroundColor: '#ffffff', padding: '0 32px' }}>
+        <div className='flex items-center justify-between h-full'>
+          {/* LOGO */}
+          <div className='flex-shrink-0 cursor-pointer' onClick={() => handleNavigate('/')}>
+            <img className='h-16 w-auto' src='/LOGO-WEBSHOP.jpg' alt='Logo' />
+          </div>
+
+          {/* NAV MENU */}
+          <div className='flex items-center gap-8 !text-gray-800 font-semibold text-sm'>
             <h4
-              className='cursor-pointer p-5 text-custom-xs hover:text-money transition duration-200'
+              className='cursor-pointer !text-gray-800 hover:text-[#FFA500] transition duration-200'
               onClick={() => handleNavigate('/')}
             >
               Trang chủ
             </h4>
             <h4
-              className='cursor-pointer p-5 text-custom-xs hover:text-money transition duration-200'
+              className='cursor-pointer !text-gray-800 hover:text-[#FFA500] transition duration-200'
               onClick={() => handleNavigate('/product')}
             >
               Sản phẩm
             </h4>
-            <div
-              className='cursor-pointer p-5 text-custom-xs hover:text-money transition duration-200 relative'
-              onClick={() => handleNavigate('/cart')}
-            >
-              <div>Giỏ hàng</div>
-              {/* <div className='absolute top-7 right-1 text-while text-xs rounded-full w-5 h-5 flex items-center justify-center bg-money'>
-                {10} 
-              </div> */}
-            </div>
             <h4
-              className='cursor-pointer p-5 text-custom-xs hover:text-money transition duration-200'
+              className='cursor-pointer !text-gray-800 hover:text-[#FFA500] transition duration-200'
               onClick={() => handleNavigate('/blog')}
             >
-              Bài viết
+              Blog
             </h4>
-            <h4 className='cursor-pointer p-5 text-custom-xs hover:text-money transition duration-200'>
-              <Dropdown menu={{ items }} placement='bottomRight' arrow={{ pointAtCenter: true }}>
-                <Avatar size={40} src={userData?.user?.avatar} icon={<UserOutlined />} />
-              </Dropdown>
+            <h4
+              className='cursor-pointer !text-gray-800 hover:text-[#FFA500] transition duration-200'
+              onClick={() => handleNavigate('/about')}
+            >
+              Về chúng tôi
             </h4>
+          </div>
+
+          {/* RIGHT ICONS */}
+          <div className='flex items-center gap-6'>
+            {/* WISHLIST */}
+            <div
+              className='cursor-pointer text-lg text-primary hover:text-[#FFA500] transition duration-200'
+              onClick={handleWishlistClick}
+            >
+              <HeartOutlined style={{ fontSize: '20px' }} />
+            </div>
+
+            {/* CART */}
+            <div
+              className='cursor-pointer text-lg text-primary hover:text-[#FFA500] transition duration-200 relative'
+              onClick={() => handleNavigate('/cart')}
+            >
+              <Badge count={cartCount} showZero={false}>
+                <ShoppingCartOutlined style={{ fontSize: '20px' }} />
+              </Badge>
+            </div>
+
+            {/* AVATAR & MENU */}
+            <Dropdown menu={{ items }} placement='bottomRight' arrow={{ pointAtCenter: true }}>
+              <Avatar
+                size={40}
+                src={userData?.user?.avatar}
+                icon={<UserOutlined />}
+                className='cursor-pointer hover:opacity-80 transition'
+              />
+            </Dropdown>
           </div>
         </div>
       </Header>
+
+      {/* CONTENT */}
       <Content className='bg-baseBackground'>
         <div>{children}</div>
       </Content>
-      <Footer className='flex items-center justify-between p-0'>
-        <div className='bg-[#FFF5EE] text-primary w-1/2 h-96 p-12 flex items-center justify-center'>
-          <div>
+
+      {/* FOOTER */}
+      <Footer className='!bg-white !text-gray-800 !p-0'>
+        <div className='bg-white text-gray-800'>
+          {/* FOOTER TOP */}
+          <div className='grid grid-cols-5 gap-8 px-12 py-16 border-b border-gray-300 !text-gray-800'>
+            {/* ABOUT */}
             <div>
-              <h3 className='text-custom-xl font-semibold'>Địa chỉ</h3>
-              <p className='text-custom-xs'>299 Trung Kính, Cầu Giấy, Hà Nội</p>
+              <h4 className='text-base font-semibold mb-4 !text-gray-800'>Về DN Shop</h4>
+              <ul className='space-y-2 text-xs !text-gray-600'>
+                <li>
+                  <a href='#' className='!text-gray-600 hover:!text-[#FFA500] transition'>
+                    Giới thiệu
+                  </a>
+                </li>
+                <li>
+                  <a href='#' className='!text-gray-600 hover:!text-[#FFA500] transition'>
+                    Câu chuyện thương hiệu
+                  </a>
+                </li>
+                <li>
+                  <a href='#' className='!text-gray-600 hover:!text-[#FFA500] transition'>
+                    Tin tức & Blog
+                  </a>
+                </li>
+                <li>
+                  <a href='#' className='!text-gray-600 hover:!text-[#FFA500] transition'>
+                    Cơ hội việc làm
+                  </a>
+                </li>
+              </ul>
             </div>
+
+            {/* POLICIES */}
             <div>
-              <h3 className='text-custom-xl font-semibold'>Liên hệ</h3>
-              <p className='text-custom-xs'>038.4609.456</p>
-              <p className='text-custom-xs underline'>thesonshop@gmail.com</p>
+              <h4 className='text-base font-semibold mb-4 !text-gray-800'>Chính sách & Quy định</h4>
+              <ul className='space-y-2 text-xs !text-gray-600'>
+                <li>
+                  <a href='#' className='!text-gray-600 hover:!text-[#FFA500] transition'>
+                    Chính sách bán hàng
+                  </a>
+                </li>
+                <li>
+                  <a href='#' className='!text-gray-600 hover:!text-[#FFA500] transition'>
+                    Chính sách đổi trả
+                  </a>
+                </li>
+                <li>
+                  <a href='#' className='!text-gray-600 hover:!text-[#FFA500] transition'>
+                    Chính sách bảo mật
+                  </a>
+                </li>
+                <li>
+                  <a href='#' className='!text-gray-600 hover:!text-[#FFA500] transition'>
+                    Điều khoản sử dụng
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* SUPPORT */}
+            <div>
+              <h4 className='text-base font-semibold mb-4 !text-gray-800'>Hỗ trợ khách hàng</h4>
+              <ul className='space-y-2 text-xs !text-gray-600'>
+                <li>
+                  <a href='#' className='!text-gray-600 hover:!text-[#FFA500] transition'>
+                    Câu hỏi thường gặp
+                  </a>
+                </li>
+                <li>
+                  <a href='#' className='!text-gray-600 hover:!text-[#FFA500] transition'>
+                    Hướng dẫn thanh toán
+                  </a>
+                </li>
+                <li>
+                  <a href='#' className='!text-gray-600 hover:!text-[#FFA500] transition'>
+                    Hướng dẫn vận chuyển
+                  </a>
+                </li>
+                <li>
+                  <a href='#' className='!text-gray-600 hover:!text-[#FFA500] transition'>
+                    Liên hệ hỗ trợ
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* CONTACT */}
+            <div>
+              <h4 className='text-base font-semibold mb-4 !text-gray-800'>Liên hệ</h4>
+              <ul className='space-y-3 text-xs !text-gray-600'>
+                <li>
+                  <p className='font-semibold !text-gray-800'>Địa chỉ:</p>
+                  <p className='!text-gray-600'>299 Trung Kính, Cầu Giấy, Hà Nội</p>
+                </li>
+                <li>
+                  <p className='font-semibold !text-gray-800'>Hotline:</p>
+                  <p className='!text-gray-600 hover:!text-[#FFA500] transition cursor-pointer'>038.4609.456</p>
+                </li>
+                <li>
+                  <p className='font-semibold !text-gray-800'>Email:</p>
+                  <p className='!text-gray-600 hover:!text-[#FFA500] transition cursor-pointer'>thesonshop@gmail.com</p>
+                </li>
+              </ul>
+            </div>
+
+            {/* NEWSLETTER */}
+            <div>
+              <h4 className='text-base font-semibold mb-4 !text-gray-800'>Đăng ký nhận tin</h4>
+              <p className='text-xs !text-gray-600 mb-3'>Nhận thông tin khuyến mãi mới nhất từ chúng tôi</p>
+              <Input
+                placeholder='Email của bạn'
+                size='small'
+                className='mb-2'
+                suffix={<SearchOutlined className='!text-gray-400' />}
+              />
+              <Button className='w-full bg-[#FFA500] !text-white border-none hover:bg-[#FF9500]' size='small'>
+                Đăng ký
+              </Button>
             </div>
           </div>
-        </div>
-        <div className='bg-[#FFF5EE] text-primary w-1/2 h-96 p-12'>
-          <div>
-            <h1 className='text-custom-xl font-semibold mb-4'>Thông tin hỗ trợ</h1>
-            <div className='w-[500px]'>
-              <Form layout='vertical'>
-                <Form.Item
-                  name='phone'
-                  rules={[
-                    { required: true, message: 'Vui lòng nhập số điện thoại!' },
-                    { pattern: /^[0-9]{10}$/, message: 'Số điện thoại không hợp lệ!' }
-                  ]}
-                >
-                  <Input placeholder='Phone' />
-                </Form.Item>
-                <Form.Item
-                  name='email'
-                  rules={[
-                    { required: true, message: 'Vui lòng nhập email!' },
-                    { pattern: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/, message: 'Email không hợp lệ!' }
-                  ]}
-                >
-                  <Input placeholder='Email' />
-                </Form.Item>
-                <Form.Item>
-                  <TextArea rows={4} placeholder='Nhập phản hồi' maxLength={6} />
-                </Form.Item>
 
-                <Form.Item>
-                  <Button className='bg-[black]' type='primary' htmlType='submit'>
-                    Gửi
-                  </Button>
-                </Form.Item>
-              </Form>
+          {/* FOOTER MIDDLE - PAYMENT & SECURITY */}
+          <div className='px-12 py-8 border-b border-gray-300 !text-gray-800'>
+            <div className='grid grid-cols-2 gap-8'>
+              <div>
+                <h5 className='text-sm font-semibold mb-3 !text-gray-800'>Phương thức thanh toán</h5>
+                <div className='flex gap-3'>
+                  <span className='text-xs bg-gray-200 px-3 py-1 rounded !text-gray-700'>Thẻ tín dụng</span>
+                  <span className='text-xs bg-gray-200 px-3 py-1 rounded !text-gray-700'>ZaloPay</span>
+                  <span className='text-xs bg-gray-200 px-3 py-1 rounded !text-gray-700'>Chuyển khoản</span>
+                  <span className='text-xs bg-gray-200 px-3 py-1 rounded !text-gray-700'>Tiền mặt</span>
+                </div>
+              </div>
+              <div>
+                <h5 className='text-sm font-semibold mb-3 !text-gray-800'>Theo dõi chúng tôi</h5>
+                <div className='flex gap-4'>
+                  <a href='#' className='text-lg !text-gray-800 hover:!text-[#FFA500] transition'>
+                    <FacebookOutlined />
+                  </a>
+                  <a href='#' className='text-lg !text-gray-800 hover:!text-[#FFA500] transition'>
+                    <InstagramOutlined />
+                  </a>
+                  <a href='#' className='text-lg !text-gray-800 hover:!text-[#FFA500] transition'>
+                    <TwitterOutlined />
+                  </a>
+                </div>
+              </div>
             </div>
+          </div>
+
+          {/* FOOTER BOTTOM */}
+          <div className='px-12 py-6 bg-gray-100 text-center text-xs !text-gray-600'>
+            <p>
+              &copy; 2024 <span className='!text-gray-800 font-semibold'>DN Shop</span>. All rights reserved. | Designed
+              with ❤️
+            </p>
           </div>
         </div>
       </Footer>
+
       <AccountUser openModal={modalAccountIsvisible} titleModal='Thông tin tài khoản' onClose={handleCloseModal} />
     </Layout>
   )

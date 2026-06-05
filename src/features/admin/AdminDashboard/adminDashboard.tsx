@@ -43,12 +43,13 @@ function AdminDashboardScreen() {
 
   return (
     <div className='w-full min-h-screen bg-zinc-50/50 p-6 flex flex-col gap-6 text-zinc-900 font-sans'>
-
       {/* Header section */}
       <div className='flex items-center justify-between border-b border-zinc-200 pb-5'>
         <div>
           <h1 className='text-3xl font-extrabold text-zinc-900 tracking-tight'>Báo Cáo Tổng Quan</h1>
-          <p className='text-zinc-500 text-sm mt-1'>Thống kê số liệu, doanh thu và xếp hạng sản phẩm, khách hàng của hệ thống.</p>
+          <p className='text-zinc-500 text-sm mt-1'>
+            Thống kê số liệu, doanh thu và xếp hạng sản phẩm, khách hàng của hệ thống.
+          </p>
         </div>
         <div className='flex items-center gap-2'>
           <span className='text-xs font-bold uppercase tracking-wider text-zinc-400 bg-zinc-50 border-zinc-200 rounded-md px-2 py-1 font-mono'>
@@ -115,7 +116,8 @@ function AdminDashboardScreen() {
           <div>
             <span className='text-xs font-bold uppercase tracking-wider text-zinc-400'>Doanh thu tháng này</span>
             <div className='font-mono text-3xl font-extrabold text-white mt-3 tracking-tight'>
-              {formatPrice(statsData?.revenue?.currentMonth || 0)} <span className='text-lg font-semibold text-zinc-400'>đ</span>
+              {formatPrice(statsData?.revenue?.currentMonth || 0)}{' '}
+              <span className='text-lg font-semibold text-zinc-400'>đ</span>
             </div>
           </div>
           <div className='text-zinc-500 text-xs font-medium'>
@@ -131,7 +133,8 @@ function AdminDashboardScreen() {
           <div>
             <span className='text-xs font-bold uppercase tracking-wider text-zinc-400'>Doanh thu quý này</span>
             <div className='font-mono text-3xl font-extrabold text-black mt-3 tracking-tight'>
-              {formatPrice(statsData?.revenue?.currentQuarter || 0)} <span className='text-lg font-semibold text-zinc-500'>đ</span>
+              {formatPrice(statsData?.revenue?.currentQuarter || 0)}{' '}
+              <span className='text-lg font-semibold text-zinc-500'>đ</span>
             </div>
           </div>
           <div className='text-zinc-400 text-xs font-medium'>
@@ -147,12 +150,11 @@ function AdminDashboardScreen() {
           <div>
             <span className='text-xs font-bold uppercase tracking-wider text-zinc-400'>Doanh thu cả năm</span>
             <div className='font-mono text-3xl font-extrabold text-white mt-3 tracking-tight'>
-              {formatPrice(statsData?.revenue?.currentYear || 0)} <span className='text-lg font-semibold text-zinc-400'>đ</span>
+              {formatPrice(statsData?.revenue?.currentYear || 0)}{' '}
+              <span className='text-lg font-semibold text-zinc-400'>đ</span>
             </div>
           </div>
-          <div className='text-zinc-400 text-xs font-medium'>
-            Thời gian: Toàn bộ năm {selectedYear}
-          </div>
+          <div className='text-zinc-400 text-xs font-medium'>Thời gian: Toàn bộ năm {selectedYear}</div>
           <div className='absolute right-[-10px] bottom-[-10px] opacity-10 text-8xl font-black select-none pointer-events-none text-zinc-400'>
             Y
           </div>
@@ -170,7 +172,6 @@ function AdminDashboardScreen() {
 
       {/* Grid of Top Statistical Entities */}
       <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
-
         {/* Top 5 Products sold the most */}
         <div className='bg-white border-zinc-200 rounded-xl p-5 shadow-sm flex flex-col gap-4'>
           <div className='border-b border-zinc-200 pb-3 flex items-center justify-between'>
@@ -263,12 +264,8 @@ function AdminDashboardScreen() {
                     </div>
                   </div>
                   <div className='text-right flex flex-col items-end gap-0.5'>
-                    <span className='text-xs font-bold font-mono text-zinc-950'>
-                      {formatPrice(item.total_spent)} đ
-                    </span>
-                    <span className='text-[10px] text-zinc-400 font-medium'>
-                      {item.total_orders} đơn hàng
-                    </span>
+                    <span className='text-xs font-bold font-mono text-zinc-950'>{formatPrice(item.total_spent)} đ</span>
+                    <span className='text-[10px] text-zinc-400 font-medium'>{item.total_orders} đơn hàng</span>
                   </div>
                 </div>
               ))
@@ -329,9 +326,7 @@ function AdminDashboardScreen() {
             )}
           </div>
         </div>
-
       </div>
-
     </div>
   )
 }

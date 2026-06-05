@@ -51,21 +51,14 @@ function OrderDetail() {
       width: 120,
       align: 'center' as const,
       render: (value: any) => (
-        <Image
-          width={80}
-          height={80}
-          src={value?.image}
-          style={{ borderRadius: 8, objectFit: 'cover' }}
-        />
+        <Image width={80} height={80} src={value?.image} style={{ borderRadius: 8, objectFit: 'cover' }} />
       )
     },
     {
       title: 'Tên sản phẩm',
       key: 'product_name',
       dataIndex: 'product',
-      render: (value: any) => (
-        <span style={{ fontWeight: 500, color: '#1a1a2e' }}>{value?.name}</span>
-      )
+      render: (value: any) => <span style={{ fontWeight: 500, color: '#1a1a2e' }}>{value?.name}</span>
     },
     {
       title: 'Số lượng',
@@ -83,9 +76,7 @@ function OrderDetail() {
       key: 'price',
       dataIndex: 'price',
       align: 'right' as const,
-      render: (value: any) => (
-        <span style={{ fontWeight: 600, color: '#ee4d2d' }}>{formatPrice(value)}</span>
-      )
+      render: (value: any) => <span style={{ fontWeight: 600, color: '#ee4d2d' }}>{formatPrice(value)}</span>
     }
   ]
 
@@ -151,9 +142,7 @@ function OrderDetail() {
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <ShoppingOutlined style={{ fontSize: 22, color: '#1677ff' }} />
-          <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: '#1a1a2e' }}>
-            Chi tiết đơn hàng #{id}
-          </h2>
+          <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: '#1a1a2e' }}>Chi tiết đơn hàng #{id}</h2>
         </div>
         <Tag
           style={{
@@ -352,9 +341,7 @@ function OrderDetail() {
                   <DollarOutlined style={{ color: '#ee4d2d', fontSize: 18 }} />
                   <span style={{ fontWeight: 600, color: '#555', fontSize: 14 }}>Tổng thanh toán</span>
                 </div>
-                <span style={{ fontWeight: 700, color: '#ee4d2d', fontSize: 18 }}>
-                  {formatPrice(total_price)}
-                </span>
+                <span style={{ fontWeight: 700, color: '#ee4d2d', fontSize: 18 }}>{formatPrice(total_price)}</span>
               </div>
 
               {/* Action buttons */}

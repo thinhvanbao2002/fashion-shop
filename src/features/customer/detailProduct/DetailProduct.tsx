@@ -1,14 +1,15 @@
-import { Image, Select, InputNumber } from 'antd'
+import { Select, InputNumber } from 'antd'
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { productServices } from '../product/productApis'
 import { formatPrice, openNotification, openNotificationError } from 'common/utils'
-import RelatedProducts from 'features/admin/Product/components/RelatedProducts'
+import CardComponent from 'common/components/cart/Cart'
 import { USER_PATH } from 'common/constants/paths'
 import Comment from '../comment/Comment'
 
 function DetailProductPage() {
   const [product, setProduct] = useState<any>({})
+  const [selectedImage, setSelectedImage] = useState<string>('')
   const navigate = useNavigate()
   const [relatedProducts, setRelatedProducts] = useState<Array<any>>([])
   const [payload, setPayload] = useState<any>({
@@ -97,110 +98,173 @@ function DetailProductPage() {
       ...prev,
       product_id: product?.id
     }))
+    setSelectedImage(product?.image || '')
   }, [product])
 
   return (
     <>
-      <div className='w-full h-[50px] pl-20 pr-20'>
-        <div className='w-full border-b-2 h-[50px] flex items-center justify-start text-custom-sm'>
-          <span>Sản phẩm</span>
-          <div className='border-r-2 border-border-basic ml-2 mr-2 w-[1px] h-[16px]'></div>
-          <span>{product.category?.name}</span>
-          <div className='border-r-2 border-border-basic ml-2 mr-2 w-[1px] h-[16px] '></div>
-          <span className='font-semibold'>{product?.name}</span>
+      {/* BREADCRUMB */}
+      <div className='bg-white border-b border-gray-200 px-8 py-4'>
+        <div className='max-w-7xl mx-auto flex items-center gap-2 text-sm text-gray-600'>
+          <span className='cursor-pointer hover:text-[#FFA500]'>Sản phẩm</span>
+          <span className='text-gray-400'>/</span>
+          <span className='cursor-pointer hover:text-[#FFA500]'>{product.category?.name}</span>
+          <span className='text-gray-400'>/</span>
+          <span className='text-gray-900 font-semibold'>{product?.name}</span>
         </div>
       </div>
-      <div className='w-full pl-20 pr-20 pt-10 pb-20 flex sm:flex-col md:flex-col lg:flex-row'>
-        <div className='p-6 sm:w-full  md:w-full lg:w-[60%]'>
-          <div className='w-full '>
-            <Image width={'100%'} className='object-cover h-auto' src={product.image} />
-          </div>
-          <div className='flex mt-2 overflow-x-scroll'>
-            {product.product_photo &&
-              product?.product_photo.length &&
-              product?.product_photo.map((p: any) => (
-                <Image width={150} height={150} className='object-cover p-1' src={p?.url} />
-              ))}
-          </div>
-        </div>
-        <div className='w-full p-6 lg:w-[40%]'>
-          <div>
-            <h2 className='uppercase text-custom-xl font-semibold'>{product?.name}</h2>
-          </div>
-          <div className='flex items-center justify-between text-custom-sm mt-4'>
-            <div className='flex'>
-              <span>Mã sản phẩm:</span>
-              <h3 className='font-semibold ml-2'>{product?.product_code}</h3>
-            </div>
-            <div className='flex'>
-              <span>Tình trạng:</span>
-              <h3 className='font-semibold ml-2'>Còn hàng</h3>
-            </div>
-          </div>
-          <div className='mt-6'>
-            <h2 className='font-extrabold text-custom-xl text-money'>{formatPrice(product.price)} VND</h2>
-          </div>
-          <div className='w-full border-t-2 border-dashed mt-6'></div>
-          <div className='mt-5'>
-            <p className='text-custom-xs text-justify'>{product.introduce}</p>
-          </div>
-          <div className='w-full border-t-2 border-dashed mt-6'></div>
-          <div className='flex items-center justify-between text-custom-sm mt-6'>
+
+      {/* MAIN CONTENT */}
+      <div className='min-h-screen bg-gray-50 py-12 px-8'>
+        <div className='max-w-7xl mx-auto'>
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-12 bg-white rounded-lg shadow-sm p-8'>
+            {/* LEFT SECTION - IMAGES */}
             <div>
-              <div className='flex flex-col'>
-                <span>SIZE</span>
-                <Select
-                  defaultValue='l'
-                  style={{ width: 180 }}
-                  onChange={(value) => handleSetCartPayload('size', value)}
-                  options={[
-                    { value: 's', label: 'S' },
-                    { value: 'm', label: 'M' },
-                    { value: 'l', label: 'L' },
-                    { value: 'xl', label: 'XL' },
-                    { value: '2xl', label: '2XL' },
-                    { value: '3xl', label: '3XL' }
-                  ]}
+              {/* MAIN IMAGE */}
+              <div className='w-full aspect-[3/4] bg-gray-100 rounded-lg overflow-hidden mb-4'>
+                <img
+                  src={selectedImage || product.image}
+                  alt={product?.name}
+                  className='w-full h-full object-cover object-center cursor-pointer transition-transform duration-300 hover:scale-105'
                 />
               </div>
+
+              {/* THUMBNAIL GALLERY */}
+              {(product.image || (product.product_photo && product?.product_photo.length > 0)) && (
+                <div className='flex gap-2 overflow-x-auto pb-2'>
+                  {/* ORIGINAL IMAGE */}
+                  {product.image && (
+                    <img
+                      src={product.image}
+                      alt='Ảnh gốc'
+                      onClick={() => setSelectedImage(product.image)}
+                      className={`w-20 h-20 rounded-lg object-cover cursor-pointer transition-all border-2 flex-shrink-0 ${
+                        selectedImage === product.image
+                          ? 'border-[#FFA500] opacity-100'
+                          : 'border-gray-200 opacity-60 hover:opacity-100'
+                      }`}
+                    />
+                  )}
+                  {/* ADDITIONAL PHOTOS */}
+                  {product?.product_photo?.map((p: any, index: number) => (
+                    <img
+                      key={index}
+                      src={p?.url}
+                      alt={`Product ${index}`}
+                      onClick={() => setSelectedImage(p?.url)}
+                      className={`w-20 h-20 rounded-lg object-cover cursor-pointer transition-all border-2 flex-shrink-0 ${
+                        selectedImage === p?.url
+                          ? 'border-[#FFA500] opacity-100'
+                          : 'border-gray-200 opacity-60 hover:opacity-100'
+                      }`}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
-            <div>
-              <div className='flex flex-col'>
-                <span>SỐ LƯỢNG</span>
-                <InputNumber
-                  min={1}
-                  defaultValue={1}
-                  style={{ width: 180 }}
-                  onChange={(value) => handleSetCartPayload('product_number', value)}
-                />
+
+            {/* RIGHT SECTION - DETAILS */}
+            <div className='flex flex-col'>
+              {/* PRODUCT NAME */}
+              <h1 className='text-3xl font-bold text-gray-900 mb-2'>{product?.name}</h1>
+
+              {/* CATEGORY & STATUS */}
+              <div className='flex items-center gap-4 mb-6 pb-6 border-b border-gray-200'>
+                <div>
+                  <p className='text-xs text-gray-500 uppercase tracking-wide mb-1'>Danh mục</p>
+                  <p className='text-sm font-semibold text-gray-800'>{product.category?.name}</p>
+                </div>
+                <div className='w-px h-12 bg-gray-200'></div>
+                <div>
+                  <p className='text-xs text-gray-500 uppercase tracking-wide mb-1'>Tình trạng</p>
+                  <p className='text-sm font-semibold text-green-600'>Còn hàng</p>
+                </div>
+                <div className='w-px h-12 bg-gray-200'></div>
+                <div>
+                  <p className='text-xs text-gray-500 uppercase tracking-wide mb-1'>Mã sản phẩm</p>
+                  <p className='text-sm font-semibold text-gray-800'>{product?.product_code}</p>
+                </div>
               </div>
-            </div>
-          </div>
-          <div className='w-full border-t-2 border-dashed mt-6'></div>
-          <div className='mt-10'>
-            <div>
-              <div>
-                <button
-                  onClick={() => handleAddToCart(cartPayload)}
-                  className='uppercase w-full p-5 bg-black text-while text-custom-xl rounded-lg shadow-xl hover:bg-money'
-                >
-                  thêm vào giỏ hàng
-                </button>
+
+              {/* PRICE */}
+              <div className='mb-6 pb-6 border-b border-gray-200'>
+                <p className='text-4xl font-bold text-[#FFA500]'>{formatPrice(product.price)} VND</p>
               </div>
-            </div>
-            {/* <div>
-              <button className='mt-6 uppercase w-full p-5 bg-money text-while text-custom-xl rounded-lg shadow-xl'>
-                thanh toán
+
+              {/* DESCRIPTION */}
+              {product.introduce && (
+                <div className='mb-6 pb-6 border-b border-gray-200'>
+                  <p className='text-gray-700 leading-relaxed text-sm'>{product.introduce}</p>
+                </div>
+              )}
+
+              {/* SIZE & QUANTITY */}
+              <div className='grid grid-cols-2 gap-4 mb-6 pb-6 border-b border-gray-200'>
+                <div>
+                  <label className='block text-xs font-bold text-gray-900 uppercase tracking-wide mb-2'>Kích cỡ</label>
+                  <Select
+                    defaultValue='l'
+                    className='w-full'
+                    onChange={(value) => handleSetCartPayload('size', value)}
+                    options={[
+                      { value: 's', label: 'S' },
+                      { value: 'm', label: 'M' },
+                      { value: 'l', label: 'L' },
+                      { value: 'xl', label: 'XL' },
+                      { value: '2xl', label: '2XL' },
+                      { value: '3xl', label: '3XL' }
+                    ]}
+                  />
+                </div>
+                <div>
+                  <label className='block text-xs font-bold text-gray-900 uppercase tracking-wide mb-2'>Số lượng</label>
+                  <InputNumber
+                    min={1}
+                    defaultValue={1}
+                    className='w-full'
+                    onChange={(value) => handleSetCartPayload('product_number', value)}
+                  />
+                </div>
+              </div>
+
+              {/* ADD TO CART BUTTON */}
+              <button
+                onClick={() => handleAddToCart(cartPayload)}
+                className='w-full bg-[#FFA500] text-white font-bold py-4 px-6 rounded-lg hover:bg-[#FF9500] transition-all duration-300 uppercase tracking-wide text-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5 mb-3'
+              >
+                + Thêm vào giỏ hàng
               </button>
-            </div> */}
+
+              {/* WISHLIST BUTTON */}
+              <button className='w-full border-2 border-[#FFA500] text-[#FFA500] font-bold py-3 px-6 rounded-lg hover:bg-orange-50 transition-all duration-300 uppercase tracking-wide'>
+                ♡ Yêu thích
+              </button>
+            </div>
           </div>
         </div>
       </div>
-      <div className='mb-10'>
-        <RelatedProducts productList={relatedProducts} handleClick={handleRelatedProductClick} />
+
+      {/* RELATED PRODUCTS */}
+      <div className='bg-white py-12 px-8'>
+        <div className='max-w-7xl mx-auto'>
+          <h2 className='text-2xl font-bold text-gray-900 mb-8'>Sản phẩm liên quan</h2>
+          {relatedProducts && relatedProducts.length > 0 ? (
+            <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6'>
+              {relatedProducts.map((item: any, index: number) => (
+                <CardComponent key={index} data={item} />
+              ))}
+            </div>
+          ) : (
+            <p className='text-gray-500 text-center py-8'>Không có sản phẩm liên quan</p>
+          )}
+        </div>
       </div>
-      <div className='mt-20'>
-        {id && <Comment id={Number(id)} reviews={product.product_reviews} getProduct={getProductById} />}
+
+      {/* COMMENTS SECTION */}
+      <div className='bg-gray-50 py-12 px-8'>
+        <div className='max-w-7xl mx-auto'>
+          {id && <Comment id={Number(id)} reviews={product.product_reviews} getProduct={getProductById} />}
+        </div>
       </div>
     </>
   )

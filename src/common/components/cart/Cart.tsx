@@ -1,4 +1,3 @@
-import { Image } from 'antd'
 import { USER_PATH } from 'common/constants/paths'
 import { formatPrice, openNotification, openNotificationError } from 'common/utils'
 import { PRODUCT_VALUES } from 'features/customer/product/product.constants.'
@@ -29,28 +28,39 @@ function CardComponent({ data }: { data: ProductData }) {
 
   return (
     <>
-      <div className='group'>
-        <div className='relative overflow-hidden block'>
-          <Image
-            height={'100%'}
-            onClick={() => {
-              console.log('>>>>>>')
-
-              navigate(`${USER_PATH.PRODUCT_DETAIL}/${data?.id}`)
-            }}
+      <div className='group w-full bg-white'>
+        {/* PHẦN 1: HÌNH ẢNH */}
+        <div className='relative w-full aspect-[3/4] overflow-hidden bg-gray-100 rounded-lg mb-4'>
+          <img
             src={data.image ? data?.image : 'https://bizweb.dktcdn.net/100/415/697/products/ak058.png?v=1701405312903'}
             alt='Product'
-            className='w-full object-cover block'
+            className='w-full h-full object-cover object-center cursor-pointer'
+            onClick={() => {
+              navigate(`${USER_PATH.PRODUCT_DETAIL}/${data?.id}`)
+            }}
           />
-          <div className='absolute inset-0 bg-black bg-opacity-10 flex items-center justify-center opacity-0 group-hover:opacity-100 transform transition-all '>
+
+          {/* HOVER OVERLAY - Nút giỏ hàng & mắt */}
+          <div className='absolute inset-0 flex items-center justify-center gap-4 bg-gradient-to-t from-black/30 via-black/10 to-transparent opacity-0 backdrop-blur-[2px] transition-all duration-300 group-hover:opacity-100 group-focus-within:opacity-100'>
+            {/* Nút Mắt - Xem chi tiết */}
             <button
               onClick={() => {
                 navigate(`${USER_PATH.PRODUCT_DETAIL}/${data?.id}`)
               }}
-              className='text-while bg-black px-6 py-2 hover:bg-money absolute bottom-0 left-0 ml-16 uppercase font-medium  transform transition-all'
+              className='flex h-12 w-12 items-center justify-center rounded-full border border-white/70 bg-white/55 text-[#FF9500] shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_8px_24px_rgba(0,0,0,0.15)] backdrop-blur-xl transition-all duration-300 hover:scale-110 hover:border-orange-200/80 hover:bg-orange-50/65 hover:text-[#FF9500] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_8px_28px_rgba(255,165,0,0.28),0_0_0_4px_rgba(255,255,255,0.18)] focus-visible:scale-110 focus-visible:border-orange-200 focus-visible:bg-orange-50/70 focus-visible:text-[#FF9500] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-orange-200/40'
+              title='Xem chi tiết'
             >
-              Mua ngay
+              <svg className='w-6 h-6' fill='currentColor' viewBox='0 0 20 20'>
+                <path d='M10 12a2 2 0 100-4 2 2 0 000 4z' />
+                <path
+                  fillRule='evenodd'
+                  d='M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z'
+                  clipRule='evenodd'
+                />
+              </svg>
             </button>
+
+            {/* Nút Giỏ hàng - Thêm vào giỏ */}
             <button
               onClick={() => {
                 handleAddToCart({
@@ -58,23 +68,29 @@ function CardComponent({ data }: { data: ProductData }) {
                   product_number: 1
                 })
               }}
-              className='text-while px-4 py-2 absolute bottom-0 right-8'
+              className='flex h-12 w-12 items-center justify-center rounded-full border border-white/70 bg-white/55 text-[#FF9500] shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_8px_24px_rgba(0,0,0,0.15)] backdrop-blur-xl transition-all duration-300 hover:scale-110 hover:border-orange-200/80 hover:bg-orange-50/65 hover:text-[#FF9500] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_8px_28px_rgba(255,165,0,0.28),0_0_0_4px_rgba(255,255,255,0.18)] focus-visible:scale-110 focus-visible:border-orange-200 focus-visible:bg-orange-50/70 focus-visible:text-[#FF9500] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-orange-200/40'
+              title='Thêm vào giỏ hàng'
             >
-              <svg className='w-6' xmlns='http://www.w3.org/2000/svg ' viewBox='0 0 576 512' fill='#000'>
-                <path d='M0 24C0 10.7 10.7 0 24 0L69.5 0c22 0 41.5 12.8 50.6 32l411 0c26.3 0 45.5 25 38.6 50.4l-41 152.3c-8.5 31.4-37 53.3-69.5 53.3l-288.5 0 5.4 28.5c2.2 11.3 12.1 19.5 23.6 19.5L488 336c13.3 0 24 10.7 24 24s-10.7 24-24 24l-288.3 0c-34.6 0-64.3-24.6-70.7-58.5L77.4 54.5c-.7-3.8-4-6.5-7.9-6.5L24 48C10.7 48 0 37.3 0 24zM128 464a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm336-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z' />
+              <svg className='w-6 h-6' fill='currentColor' viewBox='0 0 20 20'>
+                <path d='M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1h7.586a1 1 0 00.99-1.243l-1.6-8A1 1 0 0011.586 3H5.716l-.708-2.957A1 1 0 004 1H3z' />
               </svg>
             </button>
           </div>
         </div>
-        <div
-          className='text-center cursor-pointer'
-          onClick={() => {
-            navigate(`${USER_PATH.PRODUCT_DETAIL}/${data?.id}`)
-          }}
-        >
-          <h3 className='text-custom-xs font-thin text-money italic mt-2'>{PRODUCT_VALUES[data?.product_type].text}</h3>
-          <h3 className='text-custom-xs font-semibold  mt-2'>{data?.name}</h3>
-          <h2 className='text-custom-sm font-semibold mt-2 '>{formatPrice(data?.price)} VND</h2>
+
+        {/* PHẦN 2: TÊN SẢN PHẨM */}
+        <div className='px-3 mb-2'>
+          <h3
+            className='text-sm font-semibold text-gray-800 line-clamp-2 hover:text-[#FFA500] transition-colors duration-200 cursor-pointer'
+            onClick={() => navigate(`${USER_PATH.PRODUCT_DETAIL}/${data?.id}`)}
+          >
+            {data?.name}
+          </h3>
+        </div>
+
+        {/* PHẦN 3: GIÁ TIỀN */}
+        <div className='px-3 pb-3'>
+          <p className='text-lg font-bold text-[#FFA500]'>{formatPrice(data?.price)} VND</p>
         </div>
       </div>
     </>

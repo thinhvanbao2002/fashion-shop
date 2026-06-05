@@ -32,12 +32,7 @@ const RevenueChart = ({ data, selectedYear, setSelectedYear }: RevenueChartProps
       <ResponsiveContainer width='100%' height={350}>
         <LineChart data={data} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
           <CartesianGrid strokeDasharray='3 3' stroke='#f4f4f5' vertical={false} />
-          <XAxis
-            dataKey='month'
-            stroke='#71717a'
-            tickLine={false}
-            tick={{ fontSize: 12, fill: '#71717a' }}
-          />
+          <XAxis dataKey='month' stroke='#71717a' tickLine={false} tick={{ fontSize: 12, fill: '#71717a' }} />
           <YAxis
             stroke='#71717a'
             tickLine={false}

@@ -52,32 +52,17 @@ const OrderStep = ({ step }: IStep) => {
           {
             title: 'Chờ xác nhận',
             description: 'Đơn hàng mới',
-            icon:
-              step === 1 ? (
-                <LoadingOutlined style={{ color: '#1677ff' }} />
-              ) : (
-                <ClockCircleOutlined />
-              )
+            icon: step === 1 ? <LoadingOutlined style={{ color: '#1677ff' }} /> : <ClockCircleOutlined />
           },
           {
             title: 'Chuẩn bị hàng',
             description: 'Đang đóng gói',
-            icon:
-              step === 2 ? (
-                <LoadingOutlined style={{ color: '#1677ff' }} />
-              ) : (
-                <InboxOutlined />
-              )
+            icon: step === 2 ? <LoadingOutlined style={{ color: '#1677ff' }} /> : <InboxOutlined />
           },
           {
             title: 'Vận chuyển',
             description: 'Đang giao hàng',
-            icon:
-              step === 3 ? (
-                <LoadingOutlined style={{ color: '#1677ff' }} />
-              ) : (
-                <CarOutlined />
-              )
+            icon: step === 3 ? <LoadingOutlined style={{ color: '#1677ff' }} /> : <CarOutlined />
           },
           {
             title: 'Hoàn thành',
