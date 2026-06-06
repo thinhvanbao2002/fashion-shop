@@ -367,9 +367,7 @@ function OrderPage() {
                       </div>
                       <div className='flex justify-between gap-4'>
                         <span>Chủ tài khoản</span>
-                        <span className='text-right font-semibold text-gray-900'>
-                          {BANK_TRANSFER_INFO.accountName}
-                        </span>
+                        <span className='text-right font-semibold text-gray-900'>{BANK_TRANSFER_INFO.accountName}</span>
                       </div>
                       <div className='flex justify-between gap-4'>
                         <span>Số tài khoản</span>
