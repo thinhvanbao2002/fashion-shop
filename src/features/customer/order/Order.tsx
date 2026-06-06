@@ -1,4 +1,5 @@
 import {
+  BankOutlined,
   EnvironmentOutlined,
   MailOutlined,
   PhoneOutlined,
@@ -6,7 +7,7 @@ import {
   ShoppingCartOutlined,
   UserOutlined
 } from '@ant-design/icons'
-import { Form, Input, Select } from 'antd'
+import { Form, Input, Radio, Select } from 'antd'
 import Config from 'common/constants/config'
 import { USER_PATH } from 'common/constants/paths'
 import { formatPrice, getOptionListSelector, openNotification, openNotificationError } from 'common/utils'
@@ -16,11 +17,21 @@ import { orderServices } from './orderApis'
 
 const { TextArea } = Input
 
+const BANK_TRANSFER_INFO = {
+  bankCode: 'Vietcombank',
+  bankName: 'Ngân hàng Vietcombank',
+  accountName: 'DAO VAN NGUYEN',
+  accountNumber: '0123456789'
+}
+
+const BANK_TRANSFER_DESCRIPTION = 'Thanh toan don hang'
+
 function OrderPage() {
   const [form] = Form.useForm()
   const navigate = useNavigate()
   const location = useLocation()
   const listOrders = useMemo(() => location.state?.cart || [], [location.state])
+  const paymentMethod = Form.useWatch('payment_method', form)
 
   const [provinces, setProvinces] = useState<any[]>([])
   const [districts, setDistricts] = useState<any[]>([])
@@ -40,6 +51,18 @@ function OrderPage() {
       }, 0),
     [listOrders]
   )
+
+  const bankTransferQrUrl = useMemo(() => {
+    const params = new URLSearchParams({
+      acc: BANK_TRANSFER_INFO.accountNumber,
+      bank: BANK_TRANSFER_INFO.bankCode,
+      amount: String(totalPrice),
+      des: BANK_TRANSFER_DESCRIPTION,
+      template: 'compact'
+    })
+
+    return `https://qr.sepay.vn/img?${params.toString()}`
+  }, [totalPrice])
 
   const getProvince = useCallback(async () => {
     try {
@@ -73,7 +96,12 @@ function OrderPage() {
 
     try {
       setIsSubmitting(true)
-      const res = await orderServices.createOrder({ ...value, items: listOrders, total_price: totalPrice })
+      const res = await orderServices.createOrder({
+        ...value,
+        items: listOrders,
+        total_price: totalPrice,
+        pay_type: 'notpay'
+      })
       if (res) {
         navigate(USER_PATH.ORDER_SUCCESS)
         openNotification('success', 'Thành công', 'Bạn đã đặt hàng thành công!')
@@ -141,6 +169,7 @@ function OrderPage() {
         scrollToFirstError
         layout='vertical'
         requiredMark={false}
+        initialValues={{ payment_method: 'cod' }}
       >
         <div className='mx-auto grid max-w-7xl items-start gap-7 px-5 py-8 sm:px-8 sm:py-10 lg:grid-cols-[minmax(0,1.35fr)_minmax(340px,0.75fr)]'>
           <section className='rounded-3xl bg-white p-5 shadow-[0_16px_50px_-32px_rgba(15,23,42,0.35)] sm:p-8'>
@@ -282,6 +311,88 @@ function OrderPage() {
                 showCount
               />
             </Form.Item>
+
+            <div className='my-7 h-px bg-gray-100' />
+
+            <div className='mb-5 flex items-center gap-3'>
+              <div className='flex h-11 w-11 items-center justify-center rounded-xl bg-orange-50 text-lg text-[#FFA500]'>
+                <BankOutlined />
+              </div>
+              <div>
+                <h2 className='text-lg font-bold text-gray-900'>Phương thức thanh toán</h2>
+                <p className='mt-0.5 text-xs text-gray-500'>Chọn cách thanh toán phù hợp cho đơn hàng</p>
+              </div>
+            </div>
+
+            <Form.Item
+              name='payment_method'
+              rules={[{ required: true, message: 'Vui lòng chọn phương thức thanh toán!' }]}
+              className='mb-0'
+            >
+              <Radio.Group className='grid w-full gap-3 sm:grid-cols-2'>
+                <Radio.Button
+                  value='cod'
+                  className='!h-auto !rounded-2xl !border !border-gray-200 !p-4 !text-left before:!hidden'
+                >
+                  <div className='font-bold text-gray-900'>Thanh toán khi nhận hàng</div>
+                  <div className='mt-1 text-xs text-gray-500'>Trả tiền mặt cho nhân viên giao hàng</div>
+                </Radio.Button>
+                <Radio.Button
+                  value='bank_transfer'
+                  className='!h-auto !rounded-2xl !border !border-gray-200 !p-4 !text-left before:!hidden'
+                >
+                  <div className='font-bold text-gray-900'>Chuyển khoản ngân hàng</div>
+                  <div className='mt-1 text-xs text-gray-500'>Admin xác nhận sau khi nhận thanh toán</div>
+                </Radio.Button>
+              </Radio.Group>
+            </Form.Item>
+
+            {paymentMethod === 'bank_transfer' && (
+              <div className='mt-4 rounded-2xl border border-orange-100 bg-orange-50/60 p-4 text-sm'>
+                <div className='grid gap-4 md:grid-cols-[180px_minmax(0,1fr)]'>
+                  <div className='rounded-2xl bg-white p-3 shadow-sm'>
+                    <img
+                      className='mx-auto aspect-square w-full max-w-[156px] object-contain'
+                      src={bankTransferQrUrl}
+                      alt='QR chuyển khoản VietQR'
+                    />
+                  </div>
+
+                  <div>
+                    <div className='mb-3 font-bold text-gray-900'>Thông tin chuyển khoản</div>
+                    <div className='space-y-2 text-gray-600'>
+                      <div className='flex justify-between gap-4'>
+                        <span>Ngân hàng</span>
+                        <span className='text-right font-semibold text-gray-900'>{BANK_TRANSFER_INFO.bankName}</span>
+                      </div>
+                      <div className='flex justify-between gap-4'>
+                        <span>Chủ tài khoản</span>
+                        <span className='text-right font-semibold text-gray-900'>
+                          {BANK_TRANSFER_INFO.accountName}
+                        </span>
+                      </div>
+                      <div className='flex justify-between gap-4'>
+                        <span>Số tài khoản</span>
+                        <span className='text-right font-semibold text-gray-900'>
+                          {BANK_TRANSFER_INFO.accountNumber}
+                        </span>
+                      </div>
+                      <div className='flex justify-between gap-4'>
+                        <span>Số tiền</span>
+                        <span className='text-right font-semibold text-[#FFA500]'>{formatPrice(totalPrice)} VND</span>
+                      </div>
+                      <div className='flex justify-between gap-4'>
+                        <span>Nội dung</span>
+                        <span className='text-right font-semibold text-gray-900'>{BANK_TRANSFER_DESCRIPTION}</span>
+                      </div>
+                    </div>
+                    <p className='mt-3 text-xs text-gray-500'>
+                      Quét mã bằng ứng dụng ngân hàng. Admin sẽ xác nhận thanh toán sau khi nhận được chuyển khoản.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
           </section>
 
           <aside className='sticky top-6 rounded-3xl bg-white p-5 shadow-[0_16px_50px_-30px_rgba(15,23,42,0.35)] sm:p-6'>

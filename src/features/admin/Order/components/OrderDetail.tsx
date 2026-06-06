@@ -10,12 +10,13 @@ import {
   DollarOutlined,
   ShoppingOutlined,
   CheckOutlined,
-  CloseOutlined
+  CloseOutlined,
+  CreditCardOutlined
 } from '@ant-design/icons'
 import { Fragment, useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import { orderServices } from '../OrderApis'
-import { formatPrice, getDataSource, openNotificationError } from 'common/utils'
+import { formatPrice, getDataSource, openNotification, openNotificationError } from 'common/utils'
 import { OrderStatus } from '../constants/order.constant'
 
 const statusConfig: Record<string, { label: string; color: string; bg: string }> = {
@@ -26,13 +27,18 @@ const statusConfig: Record<string, { label: string; color: string; bg: string }>
   '5': { label: 'Đã hủy', color: '#cf1322', bg: '#fff1f0' }
 }
 
+const paymentMethodLabel: Record<string, string> = {
+  cod: 'Thanh toán khi nhận hàng',
+  bank_transfer: 'Chuyển khoản ngân hàng'
+}
+
 function OrderDetail() {
   const { id } = useParams()
   const [textButton, setTextButton] = useState<number>(0)
   const [order, setOrder] = useState<any>({})
   const [products, setProducts] = useState<Array<any>>([])
 
-  const { total_price, address, name, phone, order_status } = order
+  const { total_price, address, name, phone, order_status, pay_type, payment_method } = order
 
   const statusInfo = statusConfig[String(order_status)] ?? { label: 'Không xác định', color: '#888', bg: '#f5f5f5' }
 
@@ -105,6 +111,16 @@ function OrderDetail() {
   const handleCancelOrder = async () => {
     try {
       await orderServices.cancelOrder(id)
+      handleGetOrder()
+    } catch (error) {
+      openNotificationError(error)
+    }
+  }
+
+  const handleMarkAsPaid = async () => {
+    try {
+      await orderServices.markAsPaid(id)
+      openNotification('success', 'Thành công', 'Đã xác nhận đơn hàng đã thanh toán!')
       handleGetOrder()
     } catch (error) {
       openNotificationError(error)
@@ -324,6 +340,33 @@ function OrderDetail() {
 
               <Divider style={{ margin: '8px 0 16px' }} />
 
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '14px 16px',
+                  background: pay_type === 'pay' ? '#f6ffed' : '#fff7e6',
+                  borderRadius: 10,
+                  border: `1px solid ${pay_type === 'pay' ? '#b7eb8f' : '#ffd591'}`,
+                  marginBottom: 12,
+                  gap: 12
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <CreditCardOutlined style={{ color: pay_type === 'pay' ? '#52c41a' : '#fa8c16', fontSize: 18 }} />
+                  <div>
+                    <div style={{ fontWeight: 600, color: '#555', fontSize: 14 }}>Thanh toán</div>
+                    <div style={{ color: '#8c8c8c', fontSize: 11 }}>
+                      {paymentMethodLabel[payment_method] || 'Chưa xác định'}
+                    </div>
+                  </div>
+                </div>
+                <Tag color={pay_type === 'pay' ? 'green' : 'orange'} style={{ margin: 0, borderRadius: 20 }}>
+                  {pay_type === 'pay' ? 'Đã thanh toán' : 'Chưa thanh toán'}
+                </Tag>
+              </div>
+
               {/* Tổng thanh toán */}
               <div
                 style={{
@@ -343,6 +386,33 @@ function OrderDetail() {
                 </div>
                 <span style={{ fontWeight: 700, color: '#ee4d2d', fontSize: 18 }}>{formatPrice(total_price)}</span>
               </div>
+
+              {pay_type !== 'pay' && order_status !== OrderStatus.CANCELED && (
+                <Popconfirm
+                  title='Xác nhận thanh toán'
+                  description='Xác nhận đơn hàng này đã được khách thanh toán?'
+                  onConfirm={handleMarkAsPaid}
+                  okText='Đã thanh toán'
+                  cancelText='Quay lại'
+                >
+                  <Button
+                    icon={<CreditCardOutlined />}
+                    style={{
+                      width: '100%',
+                      height: 42,
+                      borderRadius: 8,
+                      fontWeight: 600,
+                      fontSize: 14,
+                      color: '#389e0d',
+                      borderColor: '#b7eb8f',
+                      background: '#f6ffed',
+                      marginBottom: 10
+                    }}
+                  >
+                    Xác nhận đã thanh toán
+                  </Button>
+                </Popconfirm>
+              )}
 
               {/* Action buttons */}
               {isActionable ? (

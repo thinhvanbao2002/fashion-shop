@@ -23,6 +23,10 @@ export const orderServices = {
     const url = `/a/order/trigerWorkFlow/${id}`
     return AxiosClient.post(url)
   },
+  markAsPaid: (id: any) => {
+    const url = `/a/order/mark-paid/${id}`
+    return AxiosClient.post(url)
+  },
   cancelOrder: (id: any) => {
     const url = `/a/order/cancel/${id}`
     return AxiosClient.post(url)
