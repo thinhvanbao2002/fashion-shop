@@ -20,8 +20,10 @@ export const warehouseServices = {
   },
   patch: (value: IWarehousePayload) => {
     const url = `/warehouse/${value?.id}`
+    const payload = { ...value }
+    delete payload.id
     return AxiosClient.patch(url, {
-      ...value
+      ...payload
     })
   },
   delete: (id: number) => {

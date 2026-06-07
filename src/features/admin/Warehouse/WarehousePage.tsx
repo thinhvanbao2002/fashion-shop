@@ -164,18 +164,19 @@ function WarehousePage() {
         res = await warehouseServices.post(payloadWarehouse)
       }
 
-      if (res.status == 1) {
+      if (res) {
         if (rowSelected) {
           openNotification('success', 'Thành công', 'Cập nhật kho hàng thành công')
         } else {
           openNotification('success', 'Thành công', 'Thêm mới kho hàng thành công')
         }
-        setIsLoading(false)
         setModalVisible(false)
         handleGetWarehouses()
       }
     } catch (error) {
       console.log('🚀 ~ handleSubmit ~ error:', error)
+    } finally {
+      setIsLoading(false)
     }
   }
 
