@@ -10,8 +10,9 @@ import {
 import { Avatar, Badge, Button, Dropdown, Input, Layout } from 'antd'
 import { MenuProps } from 'antd/lib'
 import { USER_PATH } from 'common/constants/paths'
-import { openNotification } from 'common/utils'
+import { formatPrice, openNotification } from 'common/utils'
 import AccountUser from 'features/customer/account/components/Account'
+import { productServices } from 'features/customer/product/productApis'
 import _ from 'lodash'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -35,6 +36,10 @@ const UserLayout: React.FC = ({ children }: any) => {
   const data = useSelector((state: any) => state.login)
   const [modalAccountIsvisible, setModalAccountIsVisible] = useState<boolean>(false)
   const [cartCount] = useState<number>(0)
+  const [searchValue, setSearchValue] = useState<string>('')
+  const [searchProducts, setSearchProducts] = useState<Array<any>>([])
+  const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false)
+  const [isSearching, setIsSearching] = useState<boolean>(false)
 
   const handleNavigate = (path: string) => {
     navigate(path)
@@ -57,9 +62,42 @@ const UserLayout: React.FC = ({ children }: any) => {
     navigate('/wishlist')
   }
 
+  const handleProductClick = (productId: string | number) => {
+    setSearchValue('')
+    setSearchProducts([])
+    setIsSearchOpen(false)
+    navigate(`${USER_PATH.PRODUCT_DETAIL}/${productId}`)
+  }
+
   useEffect(() => {
     setUserData(data)
   }, [data])
+
+  useEffect(() => {
+    const keyword = searchValue.trim()
+
+    if (!keyword) {
+      setSearchProducts([])
+      setIsSearchOpen(false)
+      return
+    }
+
+    const timeoutId = setTimeout(async () => {
+      try {
+        setIsSearching(true)
+        const res: any = await productServices.get({ page: 1, q: keyword } as any)
+        setSearchProducts(Array.isArray(res?.data) ? res.data.slice(0, 6) : [])
+        setIsSearchOpen(true)
+      } catch {
+        setSearchProducts([])
+        setIsSearchOpen(false)
+      } finally {
+        setIsSearching(false)
+      }
+    }, 350)
+
+    return () => clearTimeout(timeoutId)
+  }, [searchValue])
 
   const items: MenuProps['items'] = [
     {
@@ -139,6 +177,62 @@ const UserLayout: React.FC = ({ children }: any) => {
 
           {/* RIGHT ICONS */}
           <div className='flex items-center gap-6'>
+            {/* PRODUCT SEARCH */}
+            <div className='relative w-[360px] leading-normal'>
+              <Input
+                allowClear
+                value={searchValue}
+                placeholder='Tìm kiếm sản phẩm'
+                prefix={<SearchOutlined className='!text-gray-400' />}
+                onChange={(event) => setSearchValue(event.target.value)}
+                onFocus={() => {
+                  if (searchValue.trim()) setIsSearchOpen(true)
+                }}
+                onPressEnter={() => {
+                  if (searchProducts[0]?.id) handleProductClick(searchProducts[0].id)
+                }}
+                className='h-10 rounded-full px-3'
+              />
+
+              {isSearchOpen && searchValue.trim() && (
+                <div className='absolute left-0 top-[46px] z-50 w-full overflow-hidden rounded-lg border border-gray-100 bg-white shadow-[0_18px_45px_-18px_rgba(15,23,42,0.35)]'>
+                  {isSearching ? (
+                    <div className='bg-white px-4 py-3 text-sm leading-normal text-gray-500'>Đang tìm kiếm...</div>
+                  ) : searchProducts.length ? (
+                    <div className='max-h-[360px] overflow-y-auto'>
+                      {searchProducts.map((product: any) => (
+                        <button
+                          key={product.id}
+                          type='button'
+                          className='flex w-full items-center gap-3 border-0 bg-white px-4 py-3 text-left leading-normal transition hover:bg-orange-50 focus:bg-orange-50 focus:outline-none'
+                          onClick={() => handleProductClick(product.id)}
+                        >
+                          <img
+                            src={
+                              product.image ||
+                              'https://bizweb.dktcdn.net/100/415/697/products/ak058.png?v=1701405312903'
+                            }
+                            alt={product.name || 'Sản phẩm'}
+                            className='h-14 w-14 flex-shrink-0 rounded-md bg-gray-100 object-cover'
+                          />
+                          <div className='min-w-0 flex-1'>
+                            <p className='line-clamp-2 text-sm font-semibold leading-5 text-gray-800'>{product.name}</p>
+                            <p className='mt-1 text-sm font-bold leading-5 text-[#FFA500]'>
+                              {formatPrice(product.price)} VND
+                            </p>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className='bg-white px-4 py-3 text-sm leading-normal text-gray-500'>
+                      Không tìm thấy sản phẩm phù hợp
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
             {/* WISHLIST */}
             <div
               className='cursor-pointer text-lg text-primary hover:text-[#FFA500] transition duration-200'
