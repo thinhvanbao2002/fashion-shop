@@ -22,6 +22,7 @@ interface IWarehouseProduct {
   updatedAt: string
   product: {
     id: number
+    product_code?: string
     name: string
     price: number
     description: string
@@ -47,8 +48,9 @@ export const InventoryList = ({ warehouseId, onClose }: InventoryListProps) => {
     },
     {
       title: 'Mã sản phẩm',
-      key: 'product_id',
-      dataIndex: 'product_id'
+      key: 'product_code',
+      dataIndex: 'product',
+      render: (product: any) => product?.product_code
     },
     {
       title: 'Tên sản phẩm',
