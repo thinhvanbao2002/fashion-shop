@@ -1,5 +1,5 @@
 import { Button, Form, InputNumber, Select, Spin } from 'antd'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { IWarehouse } from '../../Warehouse/Warehouse.props'
 import { warehouseServices } from '../../Warehouse/WarehouseApis'
 import { openNotification } from 'common/utils'
@@ -11,28 +11,23 @@ interface ImportStockModalProps {
 }
 
 interface ImportStockPayload {
-  warehouse_id: string
+  warehouse_id: number
   quantity: number
-  product_id: string
+  product_id: number
 }
 
 export const ImportStockModal = ({ productId, onSuccess, onClose }: ImportStockModalProps) => {
   const [form] = Form.useForm()
   const [warehouses, setWarehouses] = useState<IWarehouse[]>([])
   const [loading, setLoading] = useState(false)
-  const [searchValue, setSearchValue] = useState('')
 
-  useEffect(() => {
-    fetchWarehouses()
-  }, [])
-
-  const fetchWarehouses = async () => {
+  const fetchWarehouses = useCallback(async (keyword = '') => {
     try {
       setLoading(true)
       const res = await warehouseServices.get({
         page: 1,
         take: 100,
-        name: searchValue || undefined
+        name: keyword || undefined
       })
       console.log('🚀 ~ fetchWarehouses ~ res:', res)
       if (res?.data) {
@@ -44,20 +39,23 @@ export const ImportStockModal = ({ productId, onSuccess, onClose }: ImportStockM
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    fetchWarehouses()
+  }, [fetchWarehouses])
 
   const handleSearch = (value: string) => {
-    setSearchValue(value)
-    fetchWarehouses()
+    fetchWarehouses(value)
   }
 
   const handleSubmit = async (values: { warehouseId: string; quantity: number }) => {
     try {
       setLoading(true)
       const payload: ImportStockPayload = {
-        warehouse_id: values.warehouseId,
-        quantity: values.quantity,
-        product_id: productId
+        warehouse_id: Number(values.warehouseId),
+        quantity: Number(values.quantity),
+        product_id: Number(productId)
       }
 
       const res = await warehouseServices.importProduct(payload)
@@ -69,9 +67,10 @@ export const ImportStockModal = ({ productId, onSuccess, onClose }: ImportStockM
       } else {
         openNotification('error', 'Lỗi', 'Nhập kho thất bại')
       }
-    } catch (error) {
+    } catch (error: any) {
       console.log('🚀 ~ handleSubmit ~ error:', error)
-      openNotification('error', 'Lỗi', 'Không thể nhập kho')
+      const errorMessage = error?.response?.data?.message || error?.response?.data?.error || 'Không thể nhập kho'
+      openNotification('error', 'Lỗi', errorMessage)
     } finally {
       setLoading(false)
     }
