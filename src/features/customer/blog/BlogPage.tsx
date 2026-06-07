@@ -43,7 +43,7 @@ export default function Blog() {
             <BookOutlined />
             Góc thời trang
           </div>
-          <h1 className='max-w-2xl text-3xl font-bold leading-tight sm:text-4xl'>Bài viết của DN Shop</h1>
+          <h1 className='max-w-2xl text-3xl font-bold leading-tight sm:text-4xl'>Bài viết của TaoBao shop</h1>
           <p className='mt-3 max-w-2xl text-sm leading-7 text-orange-50 sm:text-base'>
             Cập nhật xu hướng mới, bí quyết phối đồ và những câu chuyện thú vị về thời trang.
           </p>
@@ -75,7 +75,7 @@ export default function Blog() {
           <div className='grid gap-6 md:grid-cols-2 lg:grid-cols-3'>
             {blogs.map((post) => {
               const description = getTextContent(post.content)
-              const authorName = post.user?.name || 'DN Shop'
+              const authorName = post.user?.name || 'TaoBao shop'
               const avatarLetter = authorName.trim().charAt(0).toUpperCase()
 
               return (
@@ -106,7 +106,7 @@ export default function Blog() {
                       {post.title}
                     </h3>
                     <p className='mt-3 line-clamp-3 text-sm leading-6 text-gray-500'>
-                      {description || 'Khám phá thêm những chia sẻ hữu ích từ DN Shop.'}
+                      {description || 'Khám phá thêm những chia sẻ hữu ích từ TaoBao shop.'}
                     </p>
 
                     <div className='mt-auto flex items-center justify-between gap-3 pt-5'>

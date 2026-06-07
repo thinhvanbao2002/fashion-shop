@@ -53,9 +53,9 @@ function LoginPage() {
               onClick={() => navigate('/')}
               className='flex items-center gap-3 rounded-2xl bg-white/15 px-4 py-3 backdrop-blur-md transition-colors hover:bg-white/20'
             >
-              <img className='h-12 w-12 rounded-xl object-cover' src='/LOGO-WEBSHOP.jpg' alt='DN Shop' />
+              <img className='h-12 w-12 rounded-xl object-cover' src='/LOGO-WEBSHOP.jpg' alt='TaoBao shop' />
               <div className='text-left'>
-                <p className='text-lg font-bold'>DN Shop</p>
+                <p className='text-lg font-bold'>TaoBao shop</p>
                 <p className='text-xs text-orange-50'>Thời trang dành cho bạn</p>
               </div>
             </button>
@@ -69,8 +69,8 @@ function LoginPage() {
 
         <section className='px-5 py-8 sm:px-10 sm:py-10 lg:px-14 lg:py-14'>
           <button type='button' onClick={() => navigate('/')} className='mb-8 flex items-center gap-3 lg:hidden'>
-            <img className='h-12 w-12 rounded-xl object-cover shadow-sm' src='/LOGO-WEBSHOP.jpg' alt='DN Shop' />
-            <span className='text-lg font-bold text-gray-900'>DN Shop</span>
+            <img className='h-12 w-12 rounded-xl object-cover shadow-sm' src='/LOGO-WEBSHOP.jpg' alt='TaoBao shop' />
+            <span className='text-lg font-bold text-gray-900'>TaoBao shop</span>
           </button>
 
           <div className='mb-8'>
@@ -78,7 +78,9 @@ function LoginPage() {
               Chào mừng trở lại
             </span>
             <h2 className='mt-4 text-3xl font-bold text-gray-900'>Đăng nhập</h2>
-            <p className='mt-2 text-sm leading-6 text-gray-500'>Nhập thông tin tài khoản để tiếp tục với DN Shop.</p>
+            <p className='mt-2 text-sm leading-6 text-gray-500'>
+              Nhập thông tin tài khoản để tiếp tục với TaoBao shop.
+            </p>
           </div>
 
           <Form onFinish={handleSubmit} layout='vertical' requiredMark={false} size='large'>
@@ -136,7 +138,7 @@ function LoginPage() {
           </button>
 
           <p className='mt-7 text-center text-xs leading-5 text-gray-400'>
-            Bằng việc đăng nhập, bạn đồng ý với các điều khoản và chính sách của DN Shop.
+            Bằng việc đăng nhập, bạn đồng ý với các điều khoản và chính sách của TaoBao shop.
           </p>
         </section>
       </div>

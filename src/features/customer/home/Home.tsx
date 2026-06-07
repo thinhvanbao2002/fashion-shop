@@ -72,7 +72,7 @@ function HomePage() {
           <div key={index}>
             <div style={{ ...contentStyle, backgroundImage: `url(${item.url})`, height: '500px' }} className='relative'>
               <div className='absolute inset-0 bg-gradient-to-r from-black/30 to-black/10 flex flex-col items-center justify-center'>
-                <h1 className='text-4xl font-bold text-white mb-4'>DN Shop</h1>
+                <h1 className='text-4xl font-bold text-white mb-4'>TaoBao shop</h1>
                 <p className='text-lg text-white mb-6'>Thời trang chất lượng cao với giá tốt nhất</p>
                 <Button
                   size='large'

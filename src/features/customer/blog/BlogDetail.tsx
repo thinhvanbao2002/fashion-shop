@@ -58,7 +58,7 @@ function BlogDetail() {
     )
   }
 
-  const authorName = blog.user?.name || 'DN Shop'
+  const authorName = blog.user?.name || 'TaoBao shop'
   const avatarLetter = authorName.trim().charAt(0).toUpperCase()
 
   return (

@@ -195,16 +195,19 @@ const UserLayout: React.FC = ({ children }: any) => {
               />
 
               {isSearchOpen && searchValue.trim() && (
-                <div className='absolute left-0 top-[46px] z-50 w-full overflow-hidden rounded-lg border border-gray-100 bg-white shadow-[0_18px_45px_-18px_rgba(15,23,42,0.35)]'>
+                <div
+                  className='absolute left-0 top-[46px] z-50 w-full overflow-hidden rounded-lg border border-gray-100 !bg-white shadow-[0_18px_45px_-18px_rgba(15,23,42,0.35)]'
+                  style={{ backgroundColor: '#ffffff' }}
+                >
                   {isSearching ? (
-                    <div className='bg-white px-4 py-3 text-sm leading-normal text-gray-500'>Đang tìm kiếm...</div>
+                    <div className='!bg-white px-4 py-3 text-sm leading-normal text-gray-500'>Đang tìm kiếm...</div>
                   ) : searchProducts.length ? (
-                    <div className='max-h-[360px] overflow-y-auto'>
+                    <div className='max-h-[360px] overflow-y-auto !bg-white'>
                       {searchProducts.map((product: any) => (
                         <button
                           key={product.id}
                           type='button'
-                          className='flex w-full items-center gap-3 border-0 bg-white px-4 py-3 text-left leading-normal transition hover:bg-orange-50 focus:bg-orange-50 focus:outline-none'
+                          className='flex w-full items-center gap-3 border-0 !bg-white px-4 py-3 text-left leading-normal transition hover:!bg-orange-50 focus:!bg-orange-50 focus:outline-none'
                           onClick={() => handleProductClick(product.id)}
                         >
                           <img
@@ -225,7 +228,7 @@ const UserLayout: React.FC = ({ children }: any) => {
                       ))}
                     </div>
                   ) : (
-                    <div className='bg-white px-4 py-3 text-sm leading-normal text-gray-500'>
+                    <div className='!bg-white px-4 py-3 text-sm leading-normal text-gray-500'>
                       Không tìm thấy sản phẩm phù hợp
                     </div>
                   )}
@@ -276,7 +279,7 @@ const UserLayout: React.FC = ({ children }: any) => {
           <div className='grid grid-cols-5 gap-8 px-12 py-16 border-b border-gray-300 !text-gray-800'>
             {/* ABOUT */}
             <div>
-              <h4 className='text-base font-semibold mb-4 !text-gray-800'>Về DN Shop</h4>
+              <h4 className='text-base font-semibold mb-4 !text-gray-800'>Về TaoBao shop</h4>
               <ul className='space-y-2 text-xs !text-gray-600'>
                 <li>
                   <a href='#' className='!text-gray-600 hover:!text-[#FFA500] transition'>
@@ -422,8 +425,8 @@ const UserLayout: React.FC = ({ children }: any) => {
           {/* FOOTER BOTTOM */}
           <div className='px-12 py-6 bg-gray-100 text-center text-xs !text-gray-600'>
             <p>
-              &copy; 2024 <span className='!text-gray-800 font-semibold'>DN Shop</span>. All rights reserved. | Designed
-              with ❤️
+              &copy; 2024 <span className='!text-gray-800 font-semibold'>TaoBao shop</span>. All rights reserved. |
+              Designed with ❤️
             </p>
           </div>
         </div>

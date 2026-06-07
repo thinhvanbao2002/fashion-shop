@@ -8,7 +8,7 @@ import { Styled } from 'styles/stylesComponent'
 import ModalComponent from 'common/components/modal/Modal'
 import { getDataSource, openNotification } from 'common/utils'
 import { FilterWarehouse } from './components/FilterWarehouse'
-import { IPayloadListWarehouse, IWarehouse } from './Warehouse.props'
+import { IPayloadListWarehouse, IWarehouse, IWarehousePayload } from './Warehouse.props'
 import { warehouseServices } from './WarehouseApis'
 import { AddEditWarehouse } from './components/AddEditWarehouse'
 import { InventoryList } from './components/InventoryList'
@@ -147,12 +147,14 @@ function WarehousePage() {
 
   const handleSubmit = async (value: any) => {
     setIsLoading(true)
-    const payloadWarehouse = {
-      id: rowSelected?.id || '',
+    const payloadWarehouse: IWarehousePayload = {
       code: value?.code,
       name: value?.name,
-      address: value?.address,
-      createdAt: rowSelected?.createdAt || new Date().toISOString()
+      address: value?.address
+    }
+
+    if (rowSelected?.id) {
+      payloadWarehouse.id = rowSelected.id
     }
     let res
     try {

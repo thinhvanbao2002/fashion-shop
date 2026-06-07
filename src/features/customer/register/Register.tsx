@@ -46,14 +46,14 @@ function RegisterPage() {
               onClick={() => navigate('/')}
               className='flex items-center gap-3 rounded-2xl bg-white/15 px-4 py-3 backdrop-blur-md transition-colors hover:bg-white/20'
             >
-              <img className='h-12 w-12 rounded-xl object-cover' src='/LOGO-WEBSHOP.jpg' alt='DN Shop' />
+              <img className='h-12 w-12 rounded-xl object-cover' src='/LOGO-WEBSHOP.jpg' alt='TaoBao shop' />
               <div className='text-left'>
-                <p className='text-lg font-bold'>DN Shop</p>
+                <p className='text-lg font-bold'>TaoBao shop</p>
                 <p className='text-xs text-orange-50'>Thời trang dành cho bạn</p>
               </div>
             </button>
 
-            <h1 className='mt-14 max-w-md text-4xl font-bold leading-tight'>Bắt đầu hành trình cùng DN Shop</h1>
+            <h1 className='mt-14 max-w-md text-4xl font-bold leading-tight'>Bắt đầu hành trình cùng TaoBao shop</h1>
             <p className='mt-4 max-w-md text-sm leading-7 text-orange-50'>
               Tạo tài khoản để mua sắm thuận tiện hơn, lưu thông tin và theo dõi mọi đơn hàng của bạn.
             </p>
@@ -63,15 +63,15 @@ function RegisterPage() {
             <SafetyCertificateOutlined className='text-2xl' />
             <h2 className='mt-3 font-bold'>Đăng ký nhanh chóng và bảo mật</h2>
             <p className='mt-2 text-xs leading-6 text-orange-50'>
-              Thông tin tài khoản của bạn được sử dụng để nâng cao trải nghiệm mua sắm tại DN Shop.
+              Thông tin tài khoản của bạn được sử dụng để nâng cao trải nghiệm mua sắm tại TaoBao shop.
             </p>
           </div>
         </section>
 
         <section className='px-5 py-7 sm:px-10 sm:py-9 lg:px-14 lg:py-10'>
           <button type='button' onClick={() => navigate('/')} className='mb-6 flex items-center gap-3 lg:hidden'>
-            <img className='h-12 w-12 rounded-xl object-cover shadow-sm' src='/LOGO-WEBSHOP.jpg' alt='DN Shop' />
-            <span className='text-lg font-bold text-gray-900'>DN Shop</span>
+            <img className='h-12 w-12 rounded-xl object-cover shadow-sm' src='/LOGO-WEBSHOP.jpg' alt='TaoBao shop' />
+            <span className='text-lg font-bold text-gray-900'>TaoBao shop</span>
           </button>
 
           <div className='mb-6'>
@@ -79,7 +79,9 @@ function RegisterPage() {
               Thành viên mới
             </span>
             <h2 className='mt-3 text-3xl font-bold text-gray-900'>Đăng ký tài khoản</h2>
-            <p className='mt-2 text-sm leading-6 text-gray-500'>Điền thông tin bên dưới để tạo tài khoản DN Shop.</p>
+            <p className='mt-2 text-sm leading-6 text-gray-500'>
+              Điền thông tin bên dưới để tạo tài khoản TaoBao shop.
+            </p>
           </div>
 
           <Form onFinish={handleSubmit} layout='vertical' requiredMark={false} size='large'>
@@ -199,7 +201,7 @@ function RegisterPage() {
           </div>
 
           <p className='mt-5 text-center text-xs leading-5 text-gray-400'>
-            Bằng việc đăng ký, bạn đồng ý với các điều khoản và chính sách của DN Shop.
+            Bằng việc đăng ký, bạn đồng ý với các điều khoản và chính sách của TaoBao shop.
           </p>
         </section>
       </div>

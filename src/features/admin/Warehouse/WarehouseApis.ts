@@ -1,4 +1,4 @@
-import { IWarehouse, IPayloadListWarehouse, IPayloadListInventory } from './Warehouse.props'
+import { IPayloadListWarehouse, IPayloadListInventory, IWarehousePayload } from './Warehouse.props'
 import { handleObjectEmpty } from 'common/utils'
 import { AxiosClient } from 'apis/axiosClient'
 import { RECORD_SIZE } from 'common/config'
@@ -12,13 +12,13 @@ export const warehouseServices = {
       params: { ...handleParams, limit: RECORD_SIZE }
     })
   },
-  post: (payload: IWarehouse) => {
+  post: (payload: IWarehousePayload) => {
     const url = '/warehouse'
     return AxiosClient.post(url, {
       ...payload
     })
   },
-  patch: (value: any) => {
+  patch: (value: IWarehousePayload) => {
     const url = `/warehouse/${value?.id}`
     return AxiosClient.patch(url, {
       ...value

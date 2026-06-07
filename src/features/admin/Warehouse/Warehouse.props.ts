@@ -6,6 +6,13 @@ export interface IWarehouse {
   address: string
 }
 
+export interface IWarehousePayload {
+  id?: string
+  code: string
+  name: string
+  address: string
+}
+
 export interface IPayloadListWarehouse {
   page: number
   take: number
