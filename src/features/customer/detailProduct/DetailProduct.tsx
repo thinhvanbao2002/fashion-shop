@@ -223,7 +223,9 @@ function DetailProductPage() {
               {/* DESCRIPTION */}
               {product.introduce && (
                 <div className='mb-6 pb-6 border-b border-gray-200'>
-                  <p className='whitespace-pre-wrap break-words text-sm leading-relaxed text-gray-700'>{product.introduce}</p>
+                  <p className='whitespace-pre-wrap break-words text-sm leading-relaxed text-gray-700'>
+                    {product.introduce}
+                  </p>
                 </div>
               )}
 
