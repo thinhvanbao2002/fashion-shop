@@ -13,8 +13,8 @@ export const adminDashboardServices = {
     const url = `/overview/revenue/${year}`
     return AxiosClient.get(url)
   },
-  getStatistics: (year?: string, limit?: number) => {
+  getStatistics: (year?: string, limit?: number, filters?: any) => {
     const url = '/overview/statistics'
-    return AxiosClient.get(url, { params: { year, limit } })
+    return AxiosClient.get(url, { params: { year, limit, ...filters } })
   }
 }

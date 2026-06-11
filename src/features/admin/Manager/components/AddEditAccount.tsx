@@ -140,6 +140,8 @@ export const AddEditManager = ({ onFinish, onClose, rowSelected }: IAddEditAccou
         <Col span={12}>
           <Form.Item name='avatar' label='Ảnh đại diện'>
             <UploadSingleFile
+              width='120px'
+              height='120px'
               initialImage={initialvalue.avatar}
               onSuccessUpload={(imageUrl) => {
                 console.log('🚀 ~ AddEditManager ~ imageUrl:', imageUrl)

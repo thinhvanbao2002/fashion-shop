@@ -3,9 +3,18 @@ import './adminDashbroad.css'
 import { adminDashboardServices } from './adminDashboardApis'
 import { formatPrice } from 'common/utils'
 import RevenueChart from './components/RevenueData'
+import { Button, DatePicker, Select } from 'antd'
+
+const { RangePicker } = DatePicker
+const yearOptions = Array.from({ length: 7 }, (_, index) => {
+  const year = new Date().getFullYear() - 3 + index
+
+  return { value: year, label: `Năm ${year}` }
+})
 
 function AdminDashboardScreen() {
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear())
+  const [selectedDateRange, setSelectedDateRange] = useState<any>(null)
   const [adminDashboardData, setAdminDashboardData] = useState<any>({})
   const [statsData, setStatsData] = useState<any>({
     topSellingProducts: [],
@@ -22,9 +31,15 @@ function AdminDashboardScreen() {
 
   const getDashboardData = useCallback(async () => {
     try {
+      const statisticFilters = selectedDateRange
+        ? {
+            from_date: selectedDateRange[0].format('YYYY-MM-DD'),
+            to_date: selectedDateRange[1].format('YYYY-MM-DD')
+          }
+        : {}
       const [resOverview, resStats] = await Promise.all([
         adminDashboardServices.get(),
-        adminDashboardServices.getStatistics(selectedYear.toString(), 5)
+        adminDashboardServices.getStatistics(selectedYear.toString(), 5, statisticFilters)
       ])
       if (resOverview) {
         setAdminDashboardData({ ...resOverview.data })
@@ -35,11 +50,23 @@ function AdminDashboardScreen() {
     } catch (error) {
       console.log('🚀 ~ getDashboardData ~ error:', error)
     }
-  }, [selectedYear])
+  }, [selectedDateRange, selectedYear])
 
   useEffect(() => {
     getDashboardData()
   }, [getDashboardData])
+
+  const isDateFiltered = Boolean(selectedDateRange)
+  const chartData = isDateFiltered ? statsData?.revenue?.byDay || [] : statsData?.revenue?.byMonth || []
+  const chartDataKey = isDateFiltered ? 'day' : 'month'
+  const chartTitle = isDateFiltered ? '📈 Xu hướng doanh thu theo ngày' : '📈 Xu hướng doanh thu hàng tháng'
+  const filteredPeriodLabel = selectedDateRange
+    ? `${selectedDateRange[0].format('DD/MM/YYYY')} - ${selectedDateRange[1].format('DD/MM/YYYY')}`
+    : ''
+
+  const handleClearStatisticFilter = () => {
+    setSelectedDateRange(null)
+  }
 
   return (
     <div className='w-full min-h-screen bg-zinc-50/50 p-6 flex flex-col gap-6 text-zinc-900 font-sans'>
@@ -58,52 +85,127 @@ function AdminDashboardScreen() {
         </div>
       </div>
 
+      <div className='bg-white border-zinc-200 rounded-xl p-5 shadow-sm flex flex-col gap-4 md:flex-row md:items-end md:justify-between'>
+        <div>
+          <h2 className='text-base font-bold text-zinc-900'>Bộ lọc thống kê</h2>
+          <p className='mt-1 text-sm text-zinc-500'>Lọc riêng doanh thu theo khoảng ngày/tháng/năm chỉ định.</p>
+        </div>
+        <div className='flex flex-col gap-3 sm:flex-row sm:items-center'>
+          <Select
+            value={selectedYear}
+            options={yearOptions}
+            className='h-10 min-w-[130px]'
+            onChange={(value) => {
+              setSelectedYear(value)
+              setSelectedDateRange(null)
+            }}
+          />
+          <RangePicker
+            value={selectedDateRange}
+            className='h-10'
+            format='DD/MM/YYYY'
+            placeholder={['Từ ngày/tháng/năm', 'Đến ngày/tháng/năm']}
+            onChange={(value) => {
+              setSelectedDateRange(value)
+              if (value?.[0]) setSelectedYear(value[0].year())
+            }}
+          />
+          <Button className='h-10' onClick={handleClearStatisticFilter}>
+            Xóa lọc
+          </Button>
+        </div>
+      </div>
+
       {/* Main KPI Counter Cards (Monochromatic) */}
       <div className='grid grid-cols-1 md:grid-cols-4 gap-5'>
-        <div className='bg-white border-zinc-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-between'>
+        <div
+          className='rounded-xl p-5 shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-between'
+          style={{ backgroundColor: '#e0f2fe', border: '1px solid #bae6fd' }}
+        >
           <div>
-            <span className='text-xs font-bold uppercase tracking-wider text-zinc-400'>Khách hàng</span>
-            <div className='font-mono text-3xl font-extrabold text-black mt-2 tracking-tight'>
+            <span className='text-xs font-bold uppercase tracking-wider' style={{ color: '#0369a1' }}>
+              Khách hàng
+            </span>
+            <div
+              className='font-mono text-3xl font-extrabold mt-2 tracking-tight'
+              style={{ color: '#082f49' }}
+            >
               {formatPrice(adminDashboardData.countUsers || 0)}
             </div>
           </div>
-          <div className='w-12 h-12 rounded-lg bg-zinc-50 border-zinc-200 flex items-center justify-center text-zinc-600 text-lg font-bold'>
+          <div
+            className='w-12 h-12 rounded-lg flex items-center justify-center text-lg font-bold'
+            style={{ backgroundColor: '#bae6fd', border: '1px solid #7dd3fc', color: '#0369a1' }}
+          >
             👤
           </div>
         </div>
 
-        <div className='bg-white border-zinc-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-between'>
+        <div
+          className='rounded-xl p-5 shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-between'
+          style={{ backgroundColor: '#dcfce7', border: '1px solid #bbf7d0' }}
+        >
           <div>
-            <span className='text-xs font-bold uppercase tracking-wider text-zinc-400'>Sản phẩm</span>
-            <div className='font-mono text-3xl font-extrabold text-black mt-2 tracking-tight'>
+            <span className='text-xs font-bold uppercase tracking-wider' style={{ color: '#047857' }}>
+              Sản phẩm
+            </span>
+            <div
+              className='font-mono text-3xl font-extrabold mt-2 tracking-tight'
+              style={{ color: '#064e3b' }}
+            >
               {formatPrice(adminDashboardData.countProducts || 0)}
             </div>
           </div>
-          <div className='w-12 h-12 rounded-lg bg-zinc-50 border-zinc-200 flex items-center justify-center text-zinc-600 text-lg font-bold'>
+          <div
+            className='w-12 h-12 rounded-lg flex items-center justify-center text-lg font-bold'
+            style={{ backgroundColor: '#bbf7d0', border: '1px solid #86efac', color: '#047857' }}
+          >
             📦
           </div>
         </div>
 
-        <div className='bg-white border-zinc-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-between'>
+        <div
+          className='rounded-xl p-5 shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-between'
+          style={{ backgroundColor: '#fef3c7', border: '1px solid #fde68a' }}
+        >
           <div>
-            <span className='text-xs font-bold uppercase tracking-wider text-zinc-400'>Loại danh mục</span>
-            <div className='font-mono text-3xl font-extrabold text-black mt-2 tracking-tight'>
+            <span className='text-xs font-bold uppercase tracking-wider' style={{ color: '#b45309' }}>
+              Loại danh mục
+            </span>
+            <div
+              className='font-mono text-3xl font-extrabold mt-2 tracking-tight'
+              style={{ color: '#78350f' }}
+            >
               {formatPrice(adminDashboardData.countCategories || 0)}
             </div>
           </div>
-          <div className='w-12 h-12 rounded-lg bg-zinc-50 border-zinc-200 flex items-center justify-center text-zinc-600 text-lg font-bold'>
+          <div
+            className='w-12 h-12 rounded-lg flex items-center justify-center text-lg font-bold'
+            style={{ backgroundColor: '#fde68a', border: '1px solid #fcd34d', color: '#b45309' }}
+          >
             📂
           </div>
         </div>
 
-        <div className='bg-white border-zinc-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-between'>
+        <div
+          className='rounded-xl p-5 shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-between'
+          style={{ backgroundColor: '#ffe4e6', border: '1px solid #fecdd3' }}
+        >
           <div>
-            <span className='text-xs font-bold uppercase tracking-wider text-zinc-400'>Đơn hàng</span>
-            <div className='font-mono text-3xl font-extrabold text-black mt-2 tracking-tight'>
+            <span className='text-xs font-bold uppercase tracking-wider' style={{ color: '#be123c' }}>
+              Đơn hàng
+            </span>
+            <div
+              className='font-mono text-3xl font-extrabold mt-2 tracking-tight'
+              style={{ color: '#881337' }}
+            >
               {formatPrice(adminDashboardData.countOrders || 0)}
             </div>
           </div>
-          <div className='w-12 h-12 rounded-lg bg-zinc-50 border-zinc-200 flex items-center justify-center text-zinc-600 text-lg font-bold'>
+          <div
+            className='w-12 h-12 rounded-lg flex items-center justify-center text-lg font-bold'
+            style={{ backgroundColor: '#fecdd3', border: '1px solid #fda4af', color: '#be123c' }}
+          >
             📋
           </div>
         </div>
@@ -112,50 +214,85 @@ function AdminDashboardScreen() {
       {/* Revenue Performance Cards (High Contrast B&W) */}
       <div className='grid grid-cols-1 md:grid-cols-3 gap-5'>
         {/* Current Month */}
-        <div className='bg-zinc-950 border-zinc-200/30 text-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between h-[140px] relative overflow-hidden'>
+        <div
+          className='rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between h-[140px] relative overflow-hidden'
+          style={{ background: 'linear-gradient(135deg, #4f46e5 0%, #0284c7 100%)', color: '#ffffff' }}
+        >
           <div>
-            <span className='text-xs font-bold uppercase tracking-wider text-zinc-400'>Doanh thu tháng này</span>
-            <div className='font-mono text-3xl font-extrabold text-white mt-3 tracking-tight'>
-              {formatPrice(statsData?.revenue?.currentMonth || 0)}{' '}
-              <span className='text-lg font-semibold text-zinc-400'>đ</span>
+            <span className='text-xs font-bold uppercase tracking-wider' style={{ color: '#e0e7ff' }}>
+              {isDateFiltered ? 'Doanh thu theo bộ lọc' : 'Doanh thu tháng này'}
+            </span>
+            <div className='font-mono text-3xl font-extrabold mt-3 tracking-tight' style={{ color: '#ffffff' }}>
+              {formatPrice(
+                (isDateFiltered ? statsData?.revenue?.currentPeriod : statsData?.revenue?.currentMonth) || 0
+              )}{' '}
+              <span className='text-lg font-semibold' style={{ color: '#e0e7ff' }}>
+                đ
+              </span>
             </div>
           </div>
-          <div className='text-zinc-500 text-xs font-medium'>
-            Thời gian: Tháng {new Date().getMonth() + 1} / {new Date().getFullYear()}
+          <div className='text-xs font-medium' style={{ color: '#e0e7ff' }}>
+            Thời gian:{' '}
+            {isDateFiltered ? filteredPeriodLabel : `Tháng ${new Date().getMonth() + 1} / ${new Date().getFullYear()}`}
           </div>
-          <div className='absolute right-[-10px] bottom-[-10px] opacity-10 text-8xl font-black select-none pointer-events-none text-zinc-400'>
+          <div
+            className='absolute right-[-10px] bottom-[-10px] opacity-20 text-8xl font-black select-none pointer-events-none'
+            style={{ color: '#ffffff' }}
+          >
             M
           </div>
         </div>
 
         {/* Current Quarter */}
-        <div className='bg-white border-zinc-200 text-zinc-900 rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between h-[140px] relative overflow-hidden'>
+        <div
+          className='rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between h-[140px] relative overflow-hidden'
+          style={{ background: 'linear-gradient(135deg, #10b981 0%, #0f766e 100%)', color: '#ffffff' }}
+        >
           <div>
-            <span className='text-xs font-bold uppercase tracking-wider text-zinc-400'>Doanh thu quý này</span>
-            <div className='font-mono text-3xl font-extrabold text-black mt-3 tracking-tight'>
+            <span className='text-xs font-bold uppercase tracking-wider' style={{ color: '#ecfdf5' }}>
+              Doanh thu quý này
+            </span>
+            <div className='font-mono text-3xl font-extrabold mt-3 tracking-tight' style={{ color: '#ffffff' }}>
               {formatPrice(statsData?.revenue?.currentQuarter || 0)}{' '}
-              <span className='text-lg font-semibold text-zinc-500'>đ</span>
+              <span className='text-lg font-semibold' style={{ color: '#ecfdf5' }}>
+                đ
+              </span>
             </div>
           </div>
-          <div className='text-zinc-400 text-xs font-medium'>
+          <div className='text-xs font-medium' style={{ color: '#ecfdf5' }}>
             Thời gian: Quý {Math.floor(new Date().getMonth() / 3) + 1} / {new Date().getFullYear()}
           </div>
-          <div className='absolute right-[-10px] bottom-[-10px] opacity-5 text-8xl font-black select-none pointer-events-none text-zinc-900'>
+          <div
+            className='absolute right-[-10px] bottom-[-10px] opacity-20 text-8xl font-black select-none pointer-events-none'
+            style={{ color: '#ffffff' }}
+          >
             Q
           </div>
         </div>
 
         {/* Selected Year */}
-        <div className='bg-zinc-900 border-zinc-800/30 text-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between h-[140px] relative overflow-hidden'>
+        <div
+          className='rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between h-[140px] relative overflow-hidden'
+          style={{ background: 'linear-gradient(135deg, #c026d3 0%, #e11d48 100%)', color: '#ffffff' }}
+        >
           <div>
-            <span className='text-xs font-bold uppercase tracking-wider text-zinc-400'>Doanh thu cả năm</span>
-            <div className='font-mono text-3xl font-extrabold text-white mt-3 tracking-tight'>
+            <span className='text-xs font-bold uppercase tracking-wider' style={{ color: '#fdf4ff' }}>
+              Doanh thu cả năm
+            </span>
+            <div className='font-mono text-3xl font-extrabold mt-3 tracking-tight' style={{ color: '#ffffff' }}>
               {formatPrice(statsData?.revenue?.currentYear || 0)}{' '}
-              <span className='text-lg font-semibold text-zinc-400'>đ</span>
+              <span className='text-lg font-semibold' style={{ color: '#fdf4ff' }}>
+                đ
+              </span>
             </div>
           </div>
-          <div className='text-zinc-400 text-xs font-medium'>Thời gian: Toàn bộ năm {selectedYear}</div>
-          <div className='absolute right-[-10px] bottom-[-10px] opacity-10 text-8xl font-black select-none pointer-events-none text-zinc-400'>
+          <div className='text-xs font-medium' style={{ color: '#fdf4ff' }}>
+            Thời gian: Toàn bộ năm {selectedYear}
+          </div>
+          <div
+            className='absolute right-[-10px] bottom-[-10px] opacity-20 text-8xl font-black select-none pointer-events-none'
+            style={{ color: '#ffffff' }}
+          >
             Y
           </div>
         </div>
@@ -163,11 +300,7 @@ function AdminDashboardScreen() {
 
       {/* Main Chart Section */}
       <div className='w-full'>
-        <RevenueChart
-          data={statsData?.revenue?.byMonth || []}
-          selectedYear={selectedYear}
-          setSelectedYear={setSelectedYear}
-        />
+        <RevenueChart data={chartData} dataKey={chartDataKey} title={chartTitle} />
       </div>
 
       {/* Grid of Top Statistical Entities */}

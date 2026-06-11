@@ -22,11 +22,8 @@ const contentStyle: React.CSSProperties = {
 
 const backGrounds: Array<urlBackground> = [
   {
-    url: 'https://hongnhat.com.vn/wp-content/uploads/2022/10/BANNER-1.jpg'
+    url: 'https://pos.nvncdn.com/f4d87e-8901/bn/20260604_FX9czO2U.jpg?v=1780544630'
   },
-  {
-    url: 'https://cdn.gokisoft.com/uploads/stores/97/2024/01/5.jpg'
-  }
 ]
 
 function HomePage() {

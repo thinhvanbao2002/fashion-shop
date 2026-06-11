@@ -7,7 +7,7 @@ import {
   TwitterOutlined,
   UserOutlined
 } from '@ant-design/icons'
-import { Avatar, Badge, Button, Dropdown, Input, Layout } from 'antd'
+import { Avatar, Badge, Button, Dropdown, Input, Layout, Modal } from 'antd'
 import { MenuProps } from 'antd/lib'
 import { USER_PATH } from 'common/constants/paths'
 import { formatPrice, openNotification } from 'common/utils'
@@ -40,6 +40,7 @@ const UserLayout: React.FC = ({ children }: any) => {
   const [searchProducts, setSearchProducts] = useState<Array<any>>([])
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false)
   const [isSearching, setIsSearching] = useState<boolean>(false)
+  const userName = userData?.user?.name || userData?.user?.email || ''
 
   const handleNavigate = (path: string) => {
     navigate(path)
@@ -53,6 +54,17 @@ const UserLayout: React.FC = ({ children }: any) => {
     openNotification('success', 'Thành công', 'Đăng xuất thành công!')
     handleNavigate('/')
   }, [])
+
+  const handleConfirmLogout = useCallback(() => {
+    Modal.confirm({
+      title: 'Xác nhận đăng xuất',
+      content: 'Bạn có chắc chắn muốn đăng xuất không?',
+      okText: 'Đăng xuất',
+      cancelText: 'Hủy',
+      okButtonProps: { danger: true },
+      onOk: handleLogout
+    })
+  }, [handleLogout])
 
   const handleCloseModal = () => {
     setModalAccountIsVisible(false)
@@ -128,7 +140,7 @@ const UserLayout: React.FC = ({ children }: any) => {
           Đăng nhập
         </div>
       ) : (
-        <div onClick={handleLogout}>Đăng xuất</div>
+        <div onClick={handleConfirmLogout}>Đăng xuất</div>
       )
     }
   ]
@@ -256,12 +268,14 @@ const UserLayout: React.FC = ({ children }: any) => {
 
             {/* AVATAR & MENU */}
             <Dropdown menu={{ items }} placement='bottomRight' arrow={{ pointAtCenter: true }}>
-              <Avatar
-                size={40}
-                src={userData?.user?.avatar}
-                icon={<UserOutlined />}
-                className='cursor-pointer hover:opacity-80 transition'
-              />
+              <div className='flex max-w-[180px] cursor-pointer items-center gap-2 hover:opacity-80 transition'>
+                {!_.isEmpty(userData?.user) && userName && (
+                  <span className='max-w-[120px] truncate text-sm font-semibold leading-normal !text-gray-800'>
+                    {userName}
+                  </span>
+                )}
+                <Avatar size={40} src={userData?.user?.avatar} icon={<UserOutlined />} />
+              </div>
             </Dropdown>
           </div>
         </div>

@@ -5,7 +5,7 @@ import {
   SafetyCertificateOutlined,
   ShoppingCartOutlined
 } from '@ant-design/icons'
-import { InputNumber, Select } from 'antd'
+import { InputNumber, Popconfirm, Select } from 'antd'
 import { formatPrice, openNotification, openNotificationError } from 'common/utils'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router'
@@ -159,14 +159,22 @@ function CartPage() {
                               Còn hàng
                             </span>
                           </div>
-                          <button
-                            type='button'
-                            aria-label='Xóa sản phẩm'
-                            onClick={() => handleDeleteCart(cart.id)}
-                            className='flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-gray-50 text-gray-400 transition-all hover:bg-red-50 hover:text-red-500'
+                          <Popconfirm
+                            title='Xóa sản phẩm'
+                            description='Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?'
+                            okText='Xóa'
+                            cancelText='Hủy'
+                            okButtonProps={{ danger: true }}
+                            onConfirm={() => handleDeleteCart(cart.id)}
                           >
-                            <DeleteOutlined />
-                          </button>
+                            <button
+                              type='button'
+                              aria-label='Xóa sản phẩm'
+                              className='flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-gray-50 text-gray-400 transition-all hover:bg-red-50 hover:text-red-500'
+                            >
+                              <DeleteOutlined />
+                            </button>
+                          </Popconfirm>
                         </div>
 
                         <div className='flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between'>

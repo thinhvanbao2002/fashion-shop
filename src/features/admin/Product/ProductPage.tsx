@@ -21,7 +21,6 @@ function ProductPage() {
     page: 1,
     take: 10,
     q: '',
-    status: 1,
     to_date: '',
     from_date: ''
   })
@@ -66,6 +65,16 @@ function ProductPage() {
       title: 'Giá tiền',
       key: 'price',
       dataIndex: 'price'
+    },
+    {
+      title: 'Tồn kho',
+      key: 'quantity',
+      dataIndex: 'stock_quantity',
+      render: (stockQuantity: number, record: any) => {
+        const quantity = Number(stockQuantity ?? record.quantity ?? 0)
+
+        return <Tag color={quantity > 0 ? 'green' : 'red'}>{quantity}</Tag>
+      }
     },
     // {
     //   title: 'Loại sản phẩm',
@@ -174,11 +183,15 @@ function ProductPage() {
   const handleFilterProduct = useCallback(
     (value: any) => {
       console.log('🚀 ~ ProductPage ~ value:', value)
-      if (!isNil(value.status)) {
+      if ('status' in value) {
+        const nextPayload = { ...payload, page: 1 }
+        if (isNil(value.status)) {
+          delete nextPayload.status
+        } else {
+          nextPayload.status = value.status
+        }
         setPayload({
-          ...payload,
-          status: value?.status,
-          page: 1
+          ...nextPayload
         })
       }
       if (!isNil(value?.date)) {

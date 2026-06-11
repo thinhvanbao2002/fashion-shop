@@ -23,6 +23,11 @@ function DetailProductPage() {
     product_id: null
   })
   const { id } = useParams()
+  const stockQuantity = Number(product?.stock_quantity ?? product?.quantity ?? 0)
+  const selectedQuantity = Number(cartPayload.product_number || 0)
+  const isOutOfStock = stockQuantity <= 0
+  const isQuantityInvalid = selectedQuantity > stockQuantity
+  const isAddToCartDisabled = isOutOfStock || isQuantityInvalid
 
   const getProductById = useCallback(async (id: any) => {
     try {
@@ -59,16 +64,38 @@ function DetailProductPage() {
       console.log('🚀 ~ handleSetCartPayload ~ error:', error)
     }
   }
-  const handleAddToCart = useCallback(async (payload: any) => {
-    try {
-      const res = await productServices.addToCart(payload)
-      if (res) {
-        openNotification('success', 'Thành công', 'Thêm sản phẩm vào giỏ hàng thành công!')
-      }
-    } catch (error) {
-      openNotificationError(error)
+
+  const handleQuantityChange = (value: number | null) => {
+    handleSetCartPayload('product_number', value)
+
+    if (value && value > stockQuantity) {
+      openNotification('warning', 'Thông báo', 'Số lượng trong kho không đủ!')
     }
-  }, [])
+  }
+
+  const handleAddToCart = useCallback(
+    async (payload: any) => {
+      if (isOutOfStock) {
+        openNotification('warning', 'Thông báo', 'Sản phẩm đã hết hàng!')
+        return
+      }
+
+      if (Number(payload?.product_number || 0) > stockQuantity) {
+        openNotification('warning', 'Thông báo', 'Số lượng trong kho không đủ!')
+        return
+      }
+
+      try {
+        const res = await productServices.addToCart(payload)
+        if (res) {
+          openNotification('success', 'Thành công', 'Thêm sản phẩm vào giỏ hàng thành công!')
+        }
+      } catch (error) {
+        openNotificationError(error)
+      }
+    },
+    [isOutOfStock, stockQuantity]
+  )
 
   useEffect(() => {
     getProductById(id)
@@ -177,7 +204,9 @@ function DetailProductPage() {
                 <div className='w-px h-12 bg-gray-200'></div>
                 <div>
                   <p className='text-xs text-gray-500 uppercase tracking-wide mb-1'>Tình trạng</p>
-                  <p className='text-sm font-semibold text-green-600'>Còn hàng</p>
+                  <p className={`text-sm font-semibold ${isOutOfStock ? 'text-red-600' : 'text-green-600'}`}>
+                    {isOutOfStock ? 'Hết hàng' : `Còn ${stockQuantity} sản phẩm`}
+                  </p>
                 </div>
                 <div className='w-px h-12 bg-gray-200'></div>
                 <div>
@@ -220,19 +249,26 @@ function DetailProductPage() {
                   <label className='block text-xs font-bold text-gray-900 uppercase tracking-wide mb-2'>Số lượng</label>
                   <InputNumber
                     min={1}
+                    max={stockQuantity || 1}
                     defaultValue={1}
+                    disabled={isOutOfStock}
+                    status={isQuantityInvalid ? 'error' : undefined}
                     className='w-full'
-                    onChange={(value) => handleSetCartPayload('product_number', value)}
+                    onChange={handleQuantityChange}
                   />
+                  {isQuantityInvalid && (
+                    <p className='mt-2 text-xs font-semibold text-red-500'>Số lượng trong kho không đủ</p>
+                  )}
                 </div>
               </div>
 
               {/* ADD TO CART BUTTON */}
               <button
                 onClick={() => handleAddToCart(cartPayload)}
-                className='w-full bg-[#FFA500] text-white font-bold py-4 px-6 rounded-lg hover:bg-[#FF9500] transition-all duration-300 uppercase tracking-wide text-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5 mb-3'
+                disabled={isAddToCartDisabled}
+                className='w-full bg-[#FFA500] text-white font-bold py-4 px-6 rounded-lg hover:bg-[#FF9500] transition-all duration-300 uppercase tracking-wide text-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5 mb-3 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:shadow-none disabled:hover:translate-y-0'
               >
-                + Thêm vào giỏ hàng
+                {isOutOfStock ? 'Hết hàng' : '+ Thêm vào giỏ hàng'}
               </button>
 
               {/* WISHLIST BUTTON */}

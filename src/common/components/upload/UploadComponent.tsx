@@ -13,7 +13,18 @@ const UploadStyles = styled(Upload)<{ width: string; height: string }>`
   & .ant-upload-select {
     width: ${(props) => props.width} !important;
     height: ${(props) => props.height} !important;
-    over-flow: hidden;
+    overflow: hidden;
+  }
+
+  & .ant-upload {
+    overflow: hidden;
+  }
+
+  & .ant-upload img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 `
 
@@ -109,9 +120,9 @@ const UploadSingleFile = ({ onSuccessUpload, initialImage, width = '200px', heig
         height={height}
       >
         {imageUrl ? (
-          <img src={imageUrl} alt='avatar' style={{ width: '100%' }} />
+          <img src={imageUrl} alt='avatar' />
         ) : initialImage ? (
-          <img src={initialImage} alt='avatar' style={{ width: '100%' }} />
+          <img src={initialImage} alt='avatar' />
         ) : (
           uploadButton
         )}

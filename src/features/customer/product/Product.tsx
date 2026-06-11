@@ -23,7 +23,7 @@ const productPriceListOptions = [
   { label: `${formatPrice(200000)} - ${formatPrice(500000)}`, range: [200000, 500000] },
   { label: `${formatPrice(500000)} - ${formatPrice(700000)}`, range: [500000, 700000] },
   { label: `${formatPrice(700000)} - ${formatPrice(1000000)}`, range: [700000, 1000000] },
-  { label: `> ${formatPrice(1000000)}`, range: [1000000, Infinity] }
+  { label: `> ${formatPrice(1000000)}`, range: [1000000, 100000000] }
 ]
 
 function ProductPage() {
@@ -39,7 +39,7 @@ function ProductPage() {
   const initialBrand = state?.category_id || null
   const [payload, setPayload] = useState<any>({
     page: 1,
-    take: 20,
+    take: 15,
     q: '',
     to_date: '',
     from_date: '',

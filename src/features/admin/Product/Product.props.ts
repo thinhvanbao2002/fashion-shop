@@ -8,6 +8,7 @@ export interface IProduct {
   status?: number
   number_of_review?: number
   quantity?: number
+  stock_quantity?: number
   sold?: number
   description: string
   image: string

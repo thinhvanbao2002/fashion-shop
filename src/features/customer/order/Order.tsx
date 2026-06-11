@@ -12,8 +12,10 @@ import Config from 'common/constants/config'
 import { USER_PATH } from 'common/constants/paths'
 import { formatPrice, getOptionListSelector, openNotification, openNotificationError } from 'common/utils'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router'
 import { orderServices } from './orderApis'
+import { cartServices } from '../cart/cartApis'
 
 const { TextArea } = Input
 
@@ -30,6 +32,7 @@ function OrderPage() {
   const [form] = Form.useForm()
   const navigate = useNavigate()
   const location = useLocation()
+  const currentUser = useSelector((state: any) => state.login.user)
   const listOrders = useMemo(() => location.state?.cart || [], [location.state])
   const paymentMethod = Form.useWatch('payment_method', form)
 
@@ -103,6 +106,7 @@ function OrderPage() {
         pay_type: 'notpay'
       })
       if (res) {
+        await Promise.all(listOrders.map((item: any) => cartServices.delete(item.id)))
         navigate(USER_PATH.ORDER_SUCCESS)
         openNotification('success', 'Thành công', 'Bạn đã đặt hàng thành công!')
       }
@@ -116,6 +120,23 @@ function OrderPage() {
   useEffect(() => {
     getProvince()
   }, [getProvince])
+
+  useEffect(() => {
+    if (!currentUser) return
+
+    const userValues = {
+      name: currentUser?.name,
+      email: currentUser?.email,
+      phone: currentUser?.phone
+    }
+    const valuesToFill = Object.fromEntries(
+      Object.entries(userValues).filter(([key, value]) => value && !form.getFieldValue(key))
+    )
+
+    if (Object.keys(valuesToFill).length) {
+      form.setFieldsValue(valuesToFill)
+    }
+  }, [currentUser, form])
 
   useEffect(() => {
     if (province) getDistricts(province)
@@ -169,7 +190,12 @@ function OrderPage() {
         scrollToFirstError
         layout='vertical'
         requiredMark={false}
-        initialValues={{ payment_method: 'cod' }}
+        initialValues={{
+          name: currentUser?.name,
+          email: currentUser?.email,
+          phone: currentUser?.phone,
+          payment_method: 'cod'
+        }}
       >
         <div className='mx-auto grid max-w-7xl items-start gap-7 px-5 py-8 sm:px-8 sm:py-10 lg:grid-cols-[minmax(0,1.35fr)_minmax(340px,0.75fr)]'>
           <section className='rounded-3xl bg-white p-5 shadow-[0_16px_50px_-32px_rgba(15,23,42,0.35)] sm:p-8'>

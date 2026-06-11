@@ -1,6 +1,6 @@
 import { Button, Col, Form, Input, Row } from 'antd'
 import RadiusSelection from 'common/components/select/RadiusSelection'
-import { TEXT_CONSTANTS } from 'common/constants/constants'
+import { CommonStatus, TEXT_CONSTANTS } from 'common/constants/constants'
 import { categoryServices } from 'features/admin/Category/CategoryApis'
 import { useEffect, useState } from 'react'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -37,6 +37,7 @@ const AddEditProduct = () => {
     name: record?.name,
     category_id: record?.category_id,
     product_type: record?.product_type,
+    status: record?.s ?? record?.status ?? CommonStatus.ACTIVE,
     product_code: record?.product_code,
     price: record?.price,
     quantity: record?.quantity,
@@ -94,6 +95,7 @@ const AddEditProduct = () => {
       category_id: value?.category_id,
       price: value?.price,
       product_type: value?.product_type,
+      status: Number(value?.status),
       quantity: Number(value?.quantity),
       description: value?.description,
       image: value?.image,
@@ -216,6 +218,26 @@ const AddEditProduct = () => {
             ]}
           >
             <Input />
+          </Form.Item>
+        </Col>
+        <Col span={8}>
+          <Form.Item
+            name='status'
+            label='Trạng thái'
+            rules={[
+              {
+                required: true,
+                message: `Trạng thái: ${TEXT_CONSTANTS.IS_NOT_EMPTY} `
+              }
+            ]}
+          >
+            <RadiusSelection
+              placeholder={'Trạng thái hoạt động'}
+              options={[
+                { value: CommonStatus.ACTIVE, text: 'Đang hoạt động' },
+                { value: CommonStatus.INACTIVE, text: 'Ngừng hoạt động' }
+              ]}
+            />
           </Form.Item>
         </Col>
         {/* <Col span={8}>

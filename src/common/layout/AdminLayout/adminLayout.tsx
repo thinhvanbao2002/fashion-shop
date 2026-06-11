@@ -11,7 +11,7 @@ import type { MenuProps } from 'antd'
 import { Avatar, Dropdown, Layout, Menu, theme } from 'antd'
 import { ADMIN_PATH } from 'common/constants/paths'
 import { Link, useNavigate } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { openNotification } from 'common/utils'
 import { setLogin } from 'redux/slice/login.slice'
 
@@ -56,6 +56,8 @@ const AdminLayout: React.FC = ({ children }: any) => {
   const [keySider, setKeySider] = useState<string>('')
   const navigate = useNavigate()
   const dispatch = useDispatch()
+  const data = useSelector((state: any) => state.login)
+  const userName = data?.user?.name || data?.user?.email || ''
   const {
     token: { colorBgContainer }
   } = theme.useToken()
@@ -152,7 +154,14 @@ const AdminLayout: React.FC = ({ children }: any) => {
           <div className='text-custom-sm'>{titleHeader}</div>
           <div>
             <Dropdown menu={{ items }} placement='bottomRight' arrow>
-              <Avatar size={40} icon={<UserOutlined />} />
+              <div className='flex max-w-[180px] cursor-pointer items-center gap-2 hover:opacity-80 transition'>
+                {userName && (
+                  <span className='max-w-[120px] truncate text-sm font-semibold leading-normal !text-gray-800'>
+                    {userName}
+                  </span>
+                )}
+                <Avatar size={40} src={data?.user?.avatar} icon={<UserOutlined />} />
+              </div>
             </Dropdown>
           </div>
         </Header>
