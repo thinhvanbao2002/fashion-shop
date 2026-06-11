@@ -23,7 +23,7 @@ const contentStyle: React.CSSProperties = {
 const backGrounds: Array<urlBackground> = [
   {
     url: 'https://pos.nvncdn.com/f4d87e-8901/bn/20260604_FX9czO2U.jpg?v=1780544630'
-  },
+  }
 ]
 
 function HomePage() {

@@ -126,10 +126,7 @@ function AdminDashboardScreen() {
             <span className='text-xs font-bold uppercase tracking-wider' style={{ color: '#0369a1' }}>
               Khách hàng
             </span>
-            <div
-              className='font-mono text-3xl font-extrabold mt-2 tracking-tight'
-              style={{ color: '#082f49' }}
-            >
+            <div className='font-mono text-3xl font-extrabold mt-2 tracking-tight' style={{ color: '#082f49' }}>
               {formatPrice(adminDashboardData.countUsers || 0)}
             </div>
           </div>
@@ -149,10 +146,7 @@ function AdminDashboardScreen() {
             <span className='text-xs font-bold uppercase tracking-wider' style={{ color: '#047857' }}>
               Sản phẩm
             </span>
-            <div
-              className='font-mono text-3xl font-extrabold mt-2 tracking-tight'
-              style={{ color: '#064e3b' }}
-            >
+            <div className='font-mono text-3xl font-extrabold mt-2 tracking-tight' style={{ color: '#064e3b' }}>
               {formatPrice(adminDashboardData.countProducts || 0)}
             </div>
           </div>
@@ -172,10 +166,7 @@ function AdminDashboardScreen() {
             <span className='text-xs font-bold uppercase tracking-wider' style={{ color: '#b45309' }}>
               Loại danh mục
             </span>
-            <div
-              className='font-mono text-3xl font-extrabold mt-2 tracking-tight'
-              style={{ color: '#78350f' }}
-            >
+            <div className='font-mono text-3xl font-extrabold mt-2 tracking-tight' style={{ color: '#78350f' }}>
               {formatPrice(adminDashboardData.countCategories || 0)}
             </div>
           </div>
@@ -195,10 +186,7 @@ function AdminDashboardScreen() {
             <span className='text-xs font-bold uppercase tracking-wider' style={{ color: '#be123c' }}>
               Đơn hàng
             </span>
-            <div
-              className='font-mono text-3xl font-extrabold mt-2 tracking-tight'
-              style={{ color: '#881337' }}
-            >
+            <div className='font-mono text-3xl font-extrabold mt-2 tracking-tight' style={{ color: '#881337' }}>
               {formatPrice(adminDashboardData.countOrders || 0)}
             </div>
           </div>
