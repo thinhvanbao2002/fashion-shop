@@ -64,7 +64,12 @@ function ProductPage() {
     {
       title: 'Giá tiền',
       key: 'price',
-      dataIndex: 'price'
+      dataIndex: 'price',
+      render: (price: number | string) =>
+        new Intl.NumberFormat('vi-VN', {
+          style: 'currency',
+          currency: 'VND'
+        }).format(Number(price || 0))
     },
     {
       title: 'Tồn kho',

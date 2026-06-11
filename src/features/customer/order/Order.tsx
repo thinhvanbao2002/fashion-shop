@@ -99,8 +99,14 @@ function OrderPage() {
 
     try {
       setIsSubmitting(true)
+      const selectedProvince = provinces.find((item) => String(item.id) === String(value.city))
+      const selectedDistrict = districts.find((item) => String(item.id) === String(value.district))
+      const selectedWard = wards.find((item) => String(item.id) === String(value.ward))
       const res = await orderServices.createOrder({
         ...value,
+        city: selectedProvince?.name || value.city,
+        district: selectedDistrict?.name || value.district,
+        ward: selectedWard?.name || value.ward,
         items: listOrders,
         total_price: totalPrice,
         pay_type: 'notpay'
