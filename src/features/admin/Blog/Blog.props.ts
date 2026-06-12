@@ -3,6 +3,7 @@ export interface IBlog {
   title: string
   blog_photo: string
   content?: string
+  status?: string
 }
 
 export interface IDataBlog {

@@ -1,6 +1,6 @@
 import { Button, Col, Form, Input, Row } from 'antd'
 import UploadSingleFile from 'common/components/upload/UploadComponent'
-import { TEXT_CONSTANTS } from 'common/constants/constants'
+import { CommonStatus, TEXT_CONSTANTS } from 'common/constants/constants'
 import { openNotification, openNotificationError } from 'common/utils'
 import { useEffect, useState } from 'react'
 import ReactQuill from 'react-quill'
@@ -20,7 +20,7 @@ function AddEditBlogPage() {
 
   useEffect(() => {
     if (record?.content) {
-      setContent(record.description)
+      setContent(record.content)
     }
   }, [record])
 
@@ -38,7 +38,7 @@ function AddEditBlogPage() {
         title: value?.title,
         content: value?.content,
         blog_photo: value?.blog_photo,
-        status: value?.s
+        status: value?.status?.toString()
       }
 
       let res
@@ -108,10 +108,10 @@ function AddEditBlogPage() {
               >
                 <RadiusSelection
                   onChange={() => {}}
-                  defaultValue={'1'}
+                  defaultValue={CommonStatus.ACTIVE.toString()}
                   options={[
-                    { value: '1', text: 'Hoạt động' },
-                    { value: '2', text: 'Ngừng hoạt động' }
+                    { value: CommonStatus.ACTIVE.toString(), text: 'Hoạt động' },
+                    { value: CommonStatus.INACTIVE.toString(), text: 'Ngừng hoạt động' }
                   ]}
                   placeholder='Trạng thái'
                 />

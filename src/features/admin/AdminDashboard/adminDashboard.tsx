@@ -37,8 +37,14 @@ function AdminDashboardScreen() {
             to_date: selectedDateRange[1].format('YYYY-MM-DD')
           }
         : {}
+      const overviewFilters = selectedDateRange
+        ? statisticFilters
+        : {
+            from_date: `${selectedYear}-01-01`,
+            to_date: `${selectedYear}-12-31`
+          }
       const [resOverview, resStats] = await Promise.all([
-        adminDashboardServices.get(),
+        adminDashboardServices.get(overviewFilters),
         adminDashboardServices.getStatistics(selectedYear.toString(), 5, statisticFilters)
       ])
       if (resOverview) {
