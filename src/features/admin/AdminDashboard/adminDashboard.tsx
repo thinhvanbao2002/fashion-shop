@@ -54,7 +54,7 @@ function AdminDashboardScreen() {
         setStatsData({ ...resStats.data })
       }
     } catch (error) {
-      console.log('🚀 ~ getDashboardData ~ error:', error)
+      console.log('getDashboardData error:', error)
     }
   }, [selectedDateRange, selectedYear])
 
@@ -69,6 +69,7 @@ function AdminDashboardScreen() {
   const filteredPeriodLabel = selectedDateRange
     ? `${selectedDateRange[0].format('DD/MM/YYYY')} - ${selectedDateRange[1].format('DD/MM/YYYY')}`
     : ''
+  const kpiPeriodLabel = isDateFiltered ? filteredPeriodLabel : `Năm ${selectedYear}`
 
   const handleClearStatisticFilter = () => {
     setSelectedDateRange(null)
@@ -135,6 +136,9 @@ function AdminDashboardScreen() {
             <div className='font-mono text-3xl font-extrabold mt-2 tracking-tight' style={{ color: '#082f49' }}>
               {formatPrice(adminDashboardData.countUsers || 0)}
             </div>
+            <p className='mt-1 text-xs font-medium' style={{ color: '#0369a1' }}>
+              {kpiPeriodLabel}
+            </p>
           </div>
           <div
             className='w-12 h-12 rounded-lg flex items-center justify-center text-lg font-bold'
@@ -155,6 +159,9 @@ function AdminDashboardScreen() {
             <div className='font-mono text-3xl font-extrabold mt-2 tracking-tight' style={{ color: '#064e3b' }}>
               {formatPrice(adminDashboardData.countProducts || 0)}
             </div>
+            <p className='mt-1 text-xs font-medium' style={{ color: '#047857' }}>
+              {kpiPeriodLabel}
+            </p>
           </div>
           <div
             className='w-12 h-12 rounded-lg flex items-center justify-center text-lg font-bold'
@@ -175,6 +182,9 @@ function AdminDashboardScreen() {
             <div className='font-mono text-3xl font-extrabold mt-2 tracking-tight' style={{ color: '#78350f' }}>
               {formatPrice(adminDashboardData.countCategories || 0)}
             </div>
+            <p className='mt-1 text-xs font-medium' style={{ color: '#b45309' }}>
+              {kpiPeriodLabel}
+            </p>
           </div>
           <div
             className='w-12 h-12 rounded-lg flex items-center justify-center text-lg font-bold'
@@ -195,6 +205,9 @@ function AdminDashboardScreen() {
             <div className='font-mono text-3xl font-extrabold mt-2 tracking-tight' style={{ color: '#881337' }}>
               {formatPrice(adminDashboardData.countOrders || 0)}
             </div>
+            <p className='mt-1 text-xs font-medium' style={{ color: '#be123c' }}>
+              {kpiPeriodLabel}
+            </p>
           </div>
           <div
             className='w-12 h-12 rounded-lg flex items-center justify-center text-lg font-bold'
